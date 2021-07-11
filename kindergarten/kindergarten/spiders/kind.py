@@ -13,8 +13,8 @@ driver = webdriver.Chrome(path)
 # client = MongoClient('localhost', 27017)
 # db = client.dbkindergarden # local
 
-# connection = pymongo.MongoClient("mongodb+srv://{}:{}@rbscrapycluster.hzuaa.mongodb.net/myFirstDatabase?retryWrites=true&w=majority".format(os.getenv('ID'), os.getenv('PWD')))
-connection = pymongo.MongoClient("mongodb+srv://readwrite-alldb:X8KkW5nnLzNa4q3l@rbcluster.2lhlu.mongodb.net/test")
+# connection = pymongo.MongoClient("mongodb+srv://{}:{}@rbscity".format(os.getenv('ID'), os.getenv('PWD'))) example
+connection = pymongo.MongoClient("")
 db = connection.kinder_test
 
 
