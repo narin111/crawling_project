@@ -9,7 +9,7 @@ import pymongo
 path = 'C:/Users/LG/Desktop/scrapy_prac/pagescrapy/chromedriver.exe'
 driver = webdriver.Chrome(path)
 
-connection = pymongo.MongoClient("mongodb+srv://readwrite-alldb:X8KkW5nnLzNa4q3l@rbcluster.2lhlu.mongodb.net/test")
+connection = pymongo.MongoClient("")
 db = connection.kinder_test
 
 
