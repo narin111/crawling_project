@@ -4,6 +4,8 @@ from selenium import webdriver
 import time
 import pymongo
 
+## git push test
+
 path = 'C:/Users/LG/Desktop/scrapy_prac/pagescrapy/chromedriver.exe'
 driver = webdriver.Chrome(path)
 
