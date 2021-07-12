@@ -1,5 +1,7 @@
 import json
 from urllib.request import urlopen
+from urllib.parse import urlencode, unquote, quote_plus
+import urllib.request
 
 with open('sidosgg.json', encoding='UTF8') as file:
     data = json.load(file)
@@ -25,11 +27,18 @@ deduc = "https://e-childschoolinfo.moe.go.kr/api/notice/deductionSociety.do?"
 # 보험별 가입 현황 
 insur = "https://e-childschoolinfo.moe.go.kr/api/notice/insurance.do?"
 
+apikey = "2039b8c5db3c4385b39b00ae74b783cc"
 
 for one in data:
     sidoCode = one['시도코드']
     sggCode = one['시군구코드']
-    url = basic + str(sidoCode) + str(sggCode)
+    queryParams = '?' + urlencode({ quote_plus('key') : '2039b8c5db3c4385b39b00ae74b783cc', quote_plus('sidoCode') : sidoCode , quote_plus('sggCode') : sggCode })
+    url = basic
+
+    # req = urllib.request.urlopen(url)
+    req = urllib.request.Request(url + unquote(queryParams))
+    res = req.realine()
+
     print(sidoCode, sggCode)
 
 
@@ -37,7 +46,10 @@ for one in data:
 #건물현황 https://e-childschoolinfo.moe.go.kr/api/notice/building.do
 #교실면적현황 https://e-childschoolinfo.moe.go.kr/api/notice/classArea.do
 
-apikey = "	2039b8c5db3c4385b39b00ae74b783cc"
+'http://apis.data.go.kr/1360000/AsosDalyInfoService/getWthrDataList'
+
+
+
 
 
 
