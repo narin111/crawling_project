@@ -9,13 +9,13 @@ import pymongo
 path = 'C:/Users/LG/Desktop/scrapy_prac/pagescrapy/chromedriver.exe'
 driver = webdriver.Chrome(path)
 
-# from pymongo import MongoClient
-# client = MongoClient('localhost', 27017)
-# db = client.dbkindergarden # local
+from pymongo import MongoClient
+client = MongoClient('localhost', 27017)
+db = client.dbkindergarden # local
 
 # connection = pymongo.MongoClient("mongodb+srv://{}:{}@rbscity".format(os.getenv('ID'), os.getenv('PWD'))) example
-connection = pymongo.MongoClient("")
-db = connection.kinder_test
+# connection = pymongo.MongoClient("")
+# db = connection.kinder_test
 
 
 #### 어린이집
@@ -277,9 +277,9 @@ class KindSpider(scrapy.Spider):
                 }
 
                 
-                # db.kindergarden.insert_one(kinder_doc) # local
+                db.kindergarden.insert_one(kinder_doc) # local
                 cost_dict.clear()
-                db.kinder(kinder_doc)
+                # db.kinder(kinder_doc)
 
     
     
