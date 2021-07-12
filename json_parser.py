@@ -35,7 +35,7 @@ for one in data: # sidosgg.json 추출
     sggCode = one['시군구코드']
     
     # queryParams = '?' + urlencode({ quote_plus('key') : '2039b8c5db3c4385b39b00ae74b783cc', quote_plus('sidoCode') : str(sidoCode) , quote_plus('sggCode') : str(sggCode) })
-    queryParams = '?' + "key=" + apikey + "&" + "sidoCode=" + str(sidoCode) + "&" + "sggCode=" + str(sggCode)
+    queryParams = '?' + "key=" + apikey + "&sidoCode=" + str(sidoCode) + "&sggCode=" + str(sggCode)
     
     url = basic
 
@@ -45,9 +45,11 @@ for one in data: # sidosgg.json 추출
     
     j = json.loads(res)
     print(sidoCode, sggCode)
-    for i in j:
-        print(j["kinderInfo"][i]["kindername"])
- 
+    
+    # print(j["kinderInfo"][1]["kindername"])
+    jarr = j.get("kinderInfo")
+    for list in jarr:
+        print(list.get("kindername"))
     
 
     # req = urllib.request.urlopen(url)
