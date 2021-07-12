@@ -3,6 +3,7 @@ from urllib.request import urlopen
 from urllib.parse import urlencode, unquote, quote_plus
 import urllib.request
 import requests
+import time
 
 
 with open('sidosgg.json', encoding='UTF8') as file:
@@ -32,6 +33,7 @@ insur = "https://e-childschoolinfo.moe.go.kr/api/notice/insurance.do"
 apikey = "2039b8c5db3c4385b39b00ae74b783cc"
 
 for one in data: # sidosgg.json 추출
+    time.sleep(0.5)
     sidoCode = one['시도코드']
     sggCode = one['시군구코드']
     
@@ -52,7 +54,10 @@ for one in data: # sidosgg.json 추출
         
         print(list.get("kindername"))
     """
-    kinderlist = requests.get(url+query)
+    kinderList = requests.get(url+query).json()
+    kinders = kinderList["kinderInfo"]
+    
+    
     
 
 
