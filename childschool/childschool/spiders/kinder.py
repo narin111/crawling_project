@@ -254,11 +254,12 @@ class KinderSpider(scrapy.Spider):
                         
                         option_index += 1
                 
+                """
                 # 보건, 안전 탭
                 kinder_safe = driver.find_element_by_css_selector("#tabGroup > ul > li:nth-child(5) > a")
                 kinder_safe.click()
 
-                # 안전교육 , 안전점검 버튼 클릭 \
+                # 안전교육 , 안전점검 버튼 클릭 
                 safety_btn = driver.find_element_by_css_selector("#tabMenus > ul > li:nth-child(2) > a")
                 safety_btn.click()
 
@@ -293,6 +294,15 @@ class KinderSpider(scrapy.Spider):
                     
                 for key, val in kinder_bus.items():
                     print(key, val)
+                
+                # kinder_cctv = {}
+                # cctv_table = driver.find_element_by_css_selector("#idPrint > div:nth-child(20) > table")
+                # cctv_tbody = cctv_table.find_element_by_tag_name("tbody")
+                # tbody_rows = cctv_tbody.find_elements_by_tag_name("tr")
+                # for index, value in enumerate(tbody_rows):
+                    
+                """
+                
                
                 # 유치원 이름, 관할행정기관, 유치원 총정원수/현원수, 교직원 수, 제공서비스, 학급별 인원수, 학급별 비용, 혼합반
                 kinder_doc = {
@@ -335,8 +345,8 @@ class KinderSpider(scrapy.Spider):
                     "kinder_mix_age35" : { "class" : kin35_class, "total_num" : kin35_totnum, "current_num" : kin35_currnum},
                     "kinder_special" : { "class" : kin_sp_class, "total_num" : kin_sp_totnum, "current_num" : kin_sp_currnum},
 
-                    "kinder_safety"  : safety_check,
-                    "kinder_bus" : kinder_bus
+                    # "kinder_safety"  : safety_check,
+                    # "kinder_bus" : kinder_bus
 
 
                 }
@@ -358,5 +368,5 @@ class KinderSpider(scrapy.Spider):
             aftoption_age3.clear()
             aftoption_age4.clear()
             aftoption_age5.clear()
-            safety_check.clear()
-            kinder_bus.clear()
+            # safety_check.clear()
+            # kinder_bus.clear()
