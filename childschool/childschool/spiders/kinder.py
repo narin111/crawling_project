@@ -6,7 +6,8 @@ from pymongo import MongoClient
 client = MongoClient('localhost', 27017)
 db = client.dbchildshcoolsite # local
 
-path = 'C:/Users/LG/Desktop/scrapy_prac/pagescrapy/chromedriver.exe'
+# path = 'C:/Users/LG/Desktop/scrapy_prac/pagescrapy/chromedriver.exe'
+path = 'D:/Desktop/crawling_project/childschool/chromedriver.exe'
 driver = webdriver.Chrome(path)
 
 # connection = pymongo.MongoClient("")
@@ -62,6 +63,7 @@ class KinderSpider(scrapy.Spider):
                 kinder_service = driver.find_element_by_css_selector("#resultArea > div.lists > ul > li:nth-child({}) > div.info > i".format(i)).text
                 kinder_one = driver.find_element_by_css_selector("#resultArea > div.lists > ul > li:nth-child({}) > div.info > h5 > a".format(i))
                 kinder_one.click()
+                
 
                 kinder_admin = driver.find_element_by_css_selector("#summaryBox > div > div.col.info > div.cont.base > ul > li:nth-child(7) > span").text
 
@@ -252,7 +254,47 @@ class KinderSpider(scrapy.Spider):
                         
                         option_index += 1
                 
+                # 보건, 안전 탭
+                kinder_safe = driver.find_element_by_css_selector("#tabGroup > ul > li:nth-child(5) > a")
+                kinder_safe.click()
 
+                # 안전교육 , 안전점검 버튼 클릭 \
+                safety_btn = driver.find_element_by_css_selector("#tabMenus > ul > li:nth-child(2) > a")
+                safety_btn.click()
+
+                # 소방대피 훈련 여부
+                kinder_fire =  driver.find_element_by_css_selector("#idPrint > div:nth-child(4) > table > tbody > tr > td:nth-child(2)").text
+                fire_date = driver.find_element_by_css_selector("#idPrint > div:nth-child(4) > table > tbody > tr > td:nth-child(4)").text
+
+                # 안전점검
+                safety_check = {}
+                safety_check["소방대피 훈련 여부"] = kinder_fire+"("+fire_date+")"
+                safety_chk = driver.find_element_by_css_selector("#idPrint > div:nth-child(6) > table")
+                chk_tbody = safety_chk.find_element_by_tag_name("tbody")
+                
+                tbody_rows = chk_tbody.find_elements_by_tag_name("tr")
+                for index, value in enumerate(tbody_rows):
+                    safety_item = value.find_elements_by_tag_name("th")[0].text
+                    check_ox = value.find_elements_by_tag_name("td")[0].text
+                    check_date = value.find_elements_by_tag_name("td")[1].text
+                    safety_check[safety_item] = check_ox+"("+check_date+")"
+
+                # 통학차량 운영여부
+                kinder_bus = {}
+                bus_num = driver.find_element_by_css_selector("#idPrint > div:nth-child(10) > table")
+                bus_tbody = bus_num.find_element_by_tag_name("tbody")
+                
+                tbody_rows = bus_tbody.find_elements_by_tag_name("tr")
+                for index, value in enumerate(tbody_rows):
+                    kinder_bus["통학차량 운영여부"] = value.find_elements_by_tag_name("td")[0].text
+                    kinder_bus["9인승 이상"] = value.find_elements_by_tag_name("td")[3].text
+                    kinder_bus["12인승 이상"] = value.find_elements_by_tag_name("td")[4].text
+                    kinder_bus["15인승 이상"] = value.find_elements_by_tag_name("td")[5].text
+                    
+                for key, val in kinder_bus.items():
+                    print(key, val)
+               
+                # 유치원 이름, 관할행정기관, 유치원 총정원수/현원수, 교직원 수, 제공서비스, 학급별 인원수, 학급별 비용, 혼합반
                 kinder_doc = {
                     "kinder_name" : kinder_name,
                     "kinder_admin" : kinder_admin,
@@ -291,13 +333,17 @@ class KinderSpider(scrapy.Spider):
                     "kinder_mix_age34" : { "class" : kin34_class, "total_num" : kin34_totnum, "current_num" : kin34_currnum},
                     "kinder_mix_age45" : { "class" : kin45_class, "total_num" : kin45_totnum, "current_num" : kin45_currnum},
                     "kinder_mix_age35" : { "class" : kin35_class, "total_num" : kin35_totnum, "current_num" : kin35_currnum},
-                    "kinder_special" : { "class" : kin_sp_class, "total_num" : kin_sp_totnum, "current_num" : kin_sp_currnum}
+                    "kinder_special" : { "class" : kin_sp_class, "total_num" : kin_sp_totnum, "current_num" : kin_sp_currnum},
+
+                    "kinder_safety"  : safety_check,
+                    "kinder_bus" : kinder_bus
+
 
                 }
 
                 
 
-                db.kindergarden.insert_one(kinder_doc) # local
+                # db.kindergarden.insert_one(kinder_doc) # local
                 # db.kinder.insert_one(kinder_doc) # epic_testdb
 
             basic_age3.clear()
@@ -312,3 +358,5 @@ class KinderSpider(scrapy.Spider):
             aftoption_age3.clear()
             aftoption_age4.clear()
             aftoption_age5.clear()
+            safety_check.clear()
+            kinder_bus.clear()
