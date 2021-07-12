@@ -31,13 +31,12 @@ class KindSpider(scrapy.Spider):
     def parse_childpage(self, response):
         last_page = response.css('#resultArea > div.footer > div.paging > a.last::attr(href)').get()
         last_page = last_page.split("=")[1]
-        print("\n\n======lastpage==========")
-        print(int(last_page))
-        print("========================")
+        # print("\n\n======lastpage==========")
+        # print(int(last_page))
+        # print("========================")
         
-        for i in range(int(last_page), 686, -1): # (lstpg, 0, -1)
+        for i in range(int(last_page), 0, -1): # (lstpg, 0, -1)
         # for i in range(1, 5):
-        # pageCnt = 50
             page_url = 'https://e-childschoolinfo.moe.go.kr/kinderMt/combineFind.do?pageIndex={}&pageCnt=50'.format(i) ##pageCnt=50으로 바꾸기
             # 개발자 도구에서 network 창 headers에 들어가면 파라미터를 통해서 페이지를 보일 수 있는 정보를 조절할 수 있다.
             yield scrapy.Request(url = page_url, callback = self.parse_allchild, meta={'page_kinder':page_url})
@@ -60,7 +59,7 @@ class KindSpider(scrapy.Spider):
         # for i in range(1, 3):
         for i in range(1, len(kinder_list)+1):   
             baby_or_kinder = driver.find_element_by_css_selector("#resultArea > div.lists > ul > li:nth-child({}) > div.info > span".format(i)).text
-            print("\n\n"+baby_or_kinder+"\n\n")
+            # print("\n\n"+baby_or_kinder+"\n\n")
             if(baby_or_kinder == "유"):
                 ## 함수이동
                 print("\n\n유치원")
