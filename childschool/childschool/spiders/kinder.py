@@ -2,15 +2,15 @@ import scrapy
 from selenium import webdriver
 import pymongo
 
-# from pymongo import MongoClient
-# client = MongoClient('localhost', 27017)
-# db = client.dbchildshcoolsite # local
+from pymongo import MongoClient
+client = MongoClient('localhost', 27017)
+db = client.dbchildshcoolsite # local
 
 path = 'C:/Users/LG/Desktop/scrapy_prac/pagescrapy/chromedriver.exe'
 driver = webdriver.Chrome(path)
 
-connection = pymongo.MongoClient("")
-db = connection.kinder_test
+# connection = pymongo.MongoClient("")
+# db = connection.kinder_test
 
 # clone test
 
@@ -297,8 +297,8 @@ class KinderSpider(scrapy.Spider):
 
                 
 
-                # db.kindergarden.insert_one(kinder_doc) # local
-                db.kinder.insert_one(kinder_doc)
+                db.kindergarden.insert_one(kinder_doc) # local
+                # db.kinder.insert_one(kinder_doc) # epic_testdb
 
             basic_age3.clear()
             basic_age4.clear()
