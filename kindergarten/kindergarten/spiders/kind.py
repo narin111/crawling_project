@@ -219,7 +219,7 @@ class KindSpider(scrapy.Spider):
 
                     cost_dict[detail] = pay_info
 
-                
+                """
                 # 테스트용 print문
                 print("========================")
                 print("기타필요경비")
@@ -241,6 +241,7 @@ class KindSpider(scrapy.Spider):
                 print(kinder_after, kinder_aft_totnum, kinder_aft_currnum)
                 print(kinder_etccls, kinder_etc_totnum, kinder_etc_currnum)
                 print("========================")
+                """
                 
                 # 원래창으로 돌아옴
                 driver.close()
