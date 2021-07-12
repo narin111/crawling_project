@@ -8,7 +8,13 @@ db = client.dbchildshcoolsite # local
 
 # path = 'C:/Users/LG/Desktop/scrapy_prac/pagescrapy/chromedriver.exe'
 path = 'D:/Desktop/crawling_project/childschool/chromedriver.exe'
-driver = webdriver.Chrome(path)
+
+options = webdriver.ChromeOptions()
+options.add_argument('headless')
+options.add_argument('window-size=1920x1080')
+options.add_argument("disable-gpu")
+
+driver = webdriver.Chrome(path, chrome_options=options)
 
 # connection = pymongo.MongoClient("")
 # db = connection.kinder_test
@@ -20,7 +26,7 @@ class KinderSpider(scrapy.Spider):
 
     def start_requests(self):
         # pageCnt = 50
-        yield scrapy.Request(url="https://e-childschoolinfo.moe.go.kr/kinderMt/combineFind.do?&pageCnt=10", callback=self.parse_allkinder)
+        yield scrapy.Request(url="https://e-childschoolinfo.moe.go.kr/kinderMt/combineFind.do?&pageCnt=50", callback=self.parse_allkinder)
 
 
     def parse_allkinder(self, response):
@@ -31,9 +37,9 @@ class KinderSpider(scrapy.Spider):
         print(int(last_page))
 
         # 페이지별로 parse_pagekinder 함수 호출
-        # for i in ragne(1, last_page):
-        for i in range(1, 2):
-            page_url = 'https://e-childschoolinfo.moe.go.kr/kinderMt/combineFind.do?pageIndex={}&pageCnt=10'.format(i)
+        for i in range(1, last_page+1):
+        # for i in range(1, 2):
+            page_url = 'https://e-childschoolinfo.moe.go.kr/kinderMt/combineFind.do?pageIndex={}&pageCnt=50'.format(i)
             yield scrapy.Request(url = page_url, callback = self.parse_pagekinder, meta={'page_kinder':page_url})
             
 
@@ -44,8 +50,8 @@ class KinderSpider(scrapy.Spider):
         driver.get(response.meta['page_kinder'])
         kinder_listnum = driver.find_elements_by_css_selector("#resultArea > div.lists > ul > li")
 
-        # for i in range(1, len(kinder_listnum)+1):
-        for i in range(1, 3):
+        for i in range(1, len(kinder_listnum)+1):
+        # for i in range(1, 3):
             
             driver.get(response.meta['page_kinder'])
 
@@ -353,7 +359,7 @@ class KinderSpider(scrapy.Spider):
 
                 
 
-                # db.kindergarden.insert_one(kinder_doc) # local
+                db.kindergarden.insert_one(kinder_doc) # local
                 # db.kinder.insert_one(kinder_doc) # epic_testdb
 
             basic_age3.clear()
