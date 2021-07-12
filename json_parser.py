@@ -2,6 +2,7 @@ import json
 from urllib.request import urlopen
 from urllib.parse import urlencode, unquote, quote_plus
 import urllib.request
+import requests
 
 
 with open('sidosgg.json', encoding='UTF8') as file:
@@ -35,11 +36,10 @@ for one in data: # sidosgg.json 추출
     sggCode = one['시군구코드']
     
     # queryParams = '?' + urlencode({ quote_plus('key') : '2039b8c5db3c4385b39b00ae74b783cc', quote_plus('sidoCode') : str(sidoCode) , quote_plus('sggCode') : str(sggCode) })
-    queryParams = '?' + "key=" + apikey + "&sidoCode=" + str(sidoCode) + "&sggCode=" + str(sggCode)
+    query = '?' + "key=" + apikey + "&sidoCode=" + str(sidoCode) + "&sggCode=" + str(sggCode)
     
     url = basic
-
-    
+    """
     req = urllib.request.urlopen(url+queryParams)
     res = req.readline()
     
@@ -49,16 +49,13 @@ for one in data: # sidosgg.json 추출
     # print(j["kinderInfo"][1]["kindername"])
     jarr = j.get("kinderInfo")
     for list in jarr:
+        
         print(list.get("kindername"))
+    """
+    kinderlist = requests.get(url+query)
     
 
-    # req = urllib.request.urlopen(url)
-    # req = urllib.request.Request(url + unquote(queryParams))
-    # result_data = req.json()
-    # print(result_data['kinderInfo']['kindername'])
-    # get_data = requests.get(url + unquote(queryParams))
-    # result_data = get_data.json()
-    # print(result_data)
+
 
 
     # print(sidoCode, sggCode)
