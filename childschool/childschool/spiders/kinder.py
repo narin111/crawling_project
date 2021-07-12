@@ -12,6 +12,7 @@ driver = webdriver.Chrome(path)
 connection = pymongo.MongoClient("")
 db = connection.kinder_test
 
+# clone test
 
 class KinderSpider(scrapy.Spider):
     name = 'kinder'
