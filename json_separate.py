@@ -62,7 +62,7 @@ for one in data: # sidosgg.json 추출
         kindername = list.get("kindername")
         officeedu = list.get("officeedu") # 교육청명
         subofficeedu = list.get("subofficeedu") # 교육지원청명
-        kinderCode = list.get("kinderCode") # 유치원코드
+        kinderCode = list.get("kindercode") # 유치원코드
         establish = list.get("establish") # 설립유형
         rppname = list.get("rppnname") # 대표자명
         ldgrname = list.get("ldgrname") # 원장명
@@ -116,9 +116,11 @@ for one in data: # sidosgg.json 추출
     jarray = j.get("kinderInfo")
     for list in jarray:
         kindername = list.get("kindername")
+        print("####")
+        print(kindername)
         officeedu = list.get("officeedu") # 교육청명
         subofficeedu = list.get("subofficeedu") # 교육지원청명
-        kinderCode = list.get("kinderCode") # 유치원코드
+        kindercode = list.get("kindercode") # 유치원코드
         establish = list.get("establish") # 설립유형
         drcnt = list.get("drcnt") # 원장수
         adcnt = list.get("adcnt") # 원감수
@@ -157,7 +159,14 @@ for one in data: # sidosgg.json 추출
             "pbntTmng" : pbntTmng
         }
 
-        Codesame = (item for item in kinder_list if['kinderCode'] == kinderCode) # kinder_list에서 kinderCode가 같은 유치원에 딕셔너리 합침
+        # 가장 먼저 검색되는 dict 반환
+        Codesame = next((item for item in kinder_list if['kindercode'] == kindercode), None) # kinder_list에서 kinderCode가 같은 유치원 검색
+       
+
+        # Codesame = { **Codesame, **teach_doc } # kinderCode가 같은 dictionary끼리 합침
+
+        for key, value in Codesame.items():
+            print(key)
         
         
 
@@ -174,7 +183,7 @@ for one in data: # sidosgg.json 추출
         kindername = list.get("kindername")
         officeedu = list.get("officeedu") # 교육청명
         subofficeedu = list.get("subofficeedu") # 교육지원청명
-        kinderCode = list.get("kinderCode") # 유치원코드
+        kindercode = list.get("kindercode") # 유치원코드
         establish = list.get("establish") # 설립유형
         ag3_lsn_dcnt = list.get("ag3_lsn_dcnt")
         ag4_lsn_dcnt = list.get("ag4_lsn_dcnt")
@@ -197,7 +206,7 @@ for one in data: # sidosgg.json 추출
         kindername = list.get("kindername")
         officeedu = list.get("officeedu") # 교육청명
         subofficeedu = list.get("subofficeedu") # 교육지원청명
-        kinderCode = list.get("kinderCode") # 유치원코드
+        kindercode = list.get("kindercode") # 유치원코드
         establish = list.get("establish") # 설립유형
         mlsr_oprn_way_tp_cd = list.get("mlsr_oprn_way_tp_cd") 
         cons_ents_nm = list.get("cons_ents_nm")
@@ -222,7 +231,7 @@ for one in data: # sidosgg.json 추출
         kindername = list.get("kindername")
         officeedu = list.get("officeedu") # 교육청명
         subofficeedu = list.get("subofficeedu") # 교육지원청명
-        kinderCode = list.get("kinderCode") # 유치원코드
+        kindercode = list.get("kindercode") # 유치원코드
         establish = list.get("establish") # 설립유형
         vhcl_oprn_yn = list.get("vhcl_oprn_yn") 
         opra_vhcnt = list.get("opra_vhcnt")
@@ -242,7 +251,7 @@ for one in data: # sidosgg.json 추출
         kindername = list.get("kindername")
         officeedu = list.get("officeedu") # 교육청명
         subofficeedu = list.get("subofficeedu") # 교육지원청명
-        kinderCode = list.get("kinderCode") # 유치원코드
+        kindercode = list.get("kindercode") # 유치원코드
         estb_pt = list.get("estb_pt") # 설립유형
         yy1_undr_thcnt = list.get("yy1_undr_thcnt")
         yy1_abv_yy2_undr_thcnt = list.get("yy1_abv_yy2_undr_thcnt")
@@ -261,7 +270,7 @@ for one in data: # sidosgg.json 추출
         kindername = list.get("kindername")
         officeedu = list.get("officeedu") # 교육청명
         subofficeedu = list.get("subofficeedu") # 교육지원청명
-        kinderCode = list.get("kinderCode") # 유치원코드
+        kindercode = list.get("kindercode") # 유치원코드
         estb_pt = list.get("estb_pt") # 설립유형
         arql_chk_dt = list.get("arql_chk_dt")
         arql_chk_rslt_tp_cd = list.get("arql_chk_rslt_tp_cd")
@@ -291,7 +300,7 @@ for one in data: # sidosgg.json 추출
         kindername = list.get("kindername")
         officeedu = list.get("officeedu") # 교육청명
         subofficeedu = list.get("subofficeedu") # 교육지원청명
-        kinderCode = list.get("kinderCode") # 유치원코드
+        kindercode = list.get("kindercode") # 유치원코드
         estb_pt = list.get("estb_pt") # 설립유형
         fire_avd_yn = list.get("fire_avd_yn")
         fire_avd_dt = list.get("fire_avd_dt")
@@ -320,7 +329,7 @@ for one in data: # sidosgg.json 추출
         kindername = list.get("kindername")
         officeedu = list.get("officeedu") # 교육청명
         subofficeedu = list.get("subofficeedu") # 교육지원청명
-        kinderCode = list.get("kinderCode") # 유치원코드
+        kindercode = list.get("kindercode") # 유치원코드
         estb_pt = list.get("estb_pt") # 설립유형
         school_ds_yn = list.get("school_ds_yn")
         school_ds_en = list.get("school_ds_en")
@@ -337,7 +346,7 @@ for one in data: # sidosgg.json 추출
         kindername = list.get("kindername")
         officeedu = list.get("officeedu") # 교육청명
         subofficeedu = list.get("subofficeedu") # 교육지원청명
-        kinderCode = list.get("kinderCode") # 유치원코드
+        kindercode = list.get("kindercode") # 유치원코드
         estb_pt = list.get("estb_pt") # 설립유형
         insurance_nm = list.get("insurance_nm")
         insurance_en = list.get("insurance_en")
