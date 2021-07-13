@@ -48,6 +48,11 @@ for one in data: # sidosgg.json 추출
     res = req.readline()
     j = json.loads(res)
     jarray = j.get("kinderInfo")
+    print("==========$$$$$$$$$====")
+    print(len(jarray))
+    print(jarray[1].get("kindername"))
+    print("==========$$$$$$$$$====")
+    
     for list in jarray:
         kindername = list.get("kindername")
         officeedu = list.get("officeedu") # 교육청명
