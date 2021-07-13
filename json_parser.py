@@ -1,3 +1,4 @@
+# from _typeshed import SupportsDivMod
 import json
 from urllib.request import urlopen
 from urllib.parse import urlencode, unquote, quote_plus
@@ -36,26 +37,101 @@ for one in data: # sidosgg.json 추출
     time.sleep(0.5)
     sidoCode = one['시도코드']
     sggCode = one['시군구코드']
-    
+    print("==============")
+    print(sidoCode, sggCode)
+    print("==============")
     # queryParams = '?' + urlencode({ quote_plus('key') : '2039b8c5db3c4385b39b00ae74b783cc', quote_plus('sidoCode') : str(sidoCode) , quote_plus('sggCode') : str(sggCode) })
     query = '?' + "key=" + apikey + "&sidoCode=" + str(sidoCode) + "&sggCode=" + str(sggCode)
     
     url = basic
-    """
-    req = urllib.request.urlopen(url+queryParams)
+    req = urllib.request.urlopen(url+query)
     res = req.readline()
-    
     j = json.loads(res)
-    print(sidoCode, sggCode)
-    
-    # print(j["kinderInfo"][1]["kindername"])
-    jarr = j.get("kinderInfo")
-    for list in jarr:
+    jarray = j.get("kinderInfo")
+    for list in jarray:
+        kindername = list.get("kindername")
+        officeedu = list.get("officeedu") # 교육청명
+        subofficeedu = list.get("subofficeedu") # 교육지원청명
+        kinderCode = list.get("kinderCode") # 유치원코드
+        establish = list.get("establish") # 설립유형
+        rppname = list.get("rppnname") # 대표자명
+        ldgrname = list.get("ldgrname") # 원장명
+        edate = list.get("edate") # 설립일
+        odate = list.get("odate") # 개원일
+        addr = list.get("addr") # 주소
+        telno = list.get("telno") # 전화번호
+        hpaddr = list.get("hpaddr") # 홈페이지
+        opertime = list.get("opertime") # 운영시간
+        clcnt3 = list.get("clcnt3") # 만 3세 학급수
+        clcnt4 = list.get("clcnt4") # 만 4세 학급수
+        clcnt5 = list.get("clcnt5") # 만 5세 학급수
+        mixppcnt = list.get("mixppcnt") # 혼합유아수
+        shppcnt = list.get("shppcnt") # 특수유아수
+        pbnttmng = list.get("pbnttmng") # 공시차수
         
-        print(list.get("kindername"))
-    """
-    kinderList = requests.get(url+query).json()
-    kinders = kinderList["kinderInfo"]
+        print(kindername, officeedu, subofficeedu, kinderCode, establish, rppname, ldgrname, edate, odate, addr, telno, hpaddr, opertime)
+        print(clcnt3, clcnt4, clcnt5, mixppcnt, shppcnt)
+    
+    
+    req = urllib.request.urlopen(teach+query) # 직위 자격별 교직원현황
+    res = req.readline()
+    j = json.loads(res)
+    jarray = j.get("kinderInfo")
+    for list in jarray:
+        drcnt = list.get("drcnt") # 원장수
+        adcnt = list.get("adcnt") # 원감수
+        hdst_thcnt = list.get("hdst_thcnt") # 수석교사수
+        asps_thcnt = list.get("asps_thcnt") # 보직교사수
+        gnrl_thcnt = list.get("gnrl_thcnt") # 일반교사수
+        spcn_thcnt = list.get("spcn_thcnt") # 특수교사수
+        ntcnt = list.get("ntcnt") # 보건교사수
+        ntrt_thcnt = list.get("ntrt_thcnt") # 영양교사수
+        shcnt_thcnt = list.get("shcnt_thcnt") #기간제교사수
+        incnt = list.get("incnt") # 강사수
+        owcnt = list.get("owcnt") # 사무직원수
+        hdst_tchr_qacnt = list.get("hdst_tchr_qacnt") # 수석교사자격수
+        rgth_gd1_qacnt = list.get("rgth_gd1_qacnt") # 공정교사1급자격수
+        rgth_gd2_qacnt = list.get("rgth_gd2_qacnt") # 정교사2급자격수
+        asth_qacnt = list.get("asth_qacnt") # 준교사 자격수
+        pbntTmng = list.get("pbntTmng") # 공시차수
+
+    req = urllib.request.urlopen(teach_days+query) # 직위 자격별 교직원현황
+    res = req.readline()
+    j = json.loads(res)
+    jarray = j.get("kinderInfo")
+    for list in jarray:
+        ag3_lsn_dcnt = list.get("ag3_lsn_dcnt") # 3세 수업일수
+        ag5_lsn_dcnt = list.get("ag4_lsn_dcnt") # 4세 수업일수
+        ag5_lsn_dcnt = list.get("ag5_lsn_dcnt") # 5세 수업일수
+        mix_age_lsn_dcnt = list.get("mix_age_lsn_dcnt") # 혼합연령수업일수
+        spcl_lsn_dcnt = list.get("spcl_lsn_dcnt") # 특수학급수업일수
+        afsc_pros_lsn_dcnt = list.get("afsc_pros_lsn_dcnt") # 방과후 과정수업일수
+        ldnum_blw_yn = list.get("ldnum_blw_yn") # 법정일수이하여부
+        fdtn_kndr_yn = list.get("fdtn_kndr_yn") # 신설유치원여부
+        pbntTmng = list.get("pbntTmng") # 공시차수
+
+    req = urllib.request.urlopen(meal+query) # 직위 자격별 교직원현황
+    res = req.readline()
+    j = json.loads(res)
+    jarray = j.get("kinderInfo")
+    for list in jarray:
+        mlsr_oprn_way_tp_cd = list.get("mlsr_oprn_way_tp_cd") # 급식운영방식구분
+        cons_ents_nm = list.get("cons_ents_nm") # 위탁업체명
+        al_kpcnt = list.get("al_kpcnt") # 전체유아수
+        mlsr_kpcnt = list.get("mlsr_kpcnt") # 급식유아수
+        ntrt_tchr_agmt_yn = list.get("ntrt_tchr_agmt_yn") # 영양교사배치여부
+        snge_agmt_ntrt_thcnt = list.get("snge_agmt_ntrt_thcnt") # 단독배치영양교사수
+        cprt_agmt_ntrt_thcnt = list.get("cprt_agmt_ntrt_thcnt") # 공동배치영양교사수
+        ckcnt = list.get("ckcnt") # 조리사수
+        cmcnt = list.get("cmcnt") # 조리인력수
+        mas_mspl_dclr_yn = list.get("mas_mspl_dclr_yn") # 집단급식소신고여부
+        pbntTmng = list.get("pbntTmng") # 공시차수
+        
+        
+
+    
+    # kinderList = requests.get(url+query).json()
+    # kinders = kinderList["kinderInfo"]
     
     
     
