@@ -5,7 +5,7 @@
 
 ## sidosgg.json 
  
-> https://e-childschoolinfo.moe.go.kr/openApi/sidoSigunguCode.do 
+> https://e-childschoolinfo.moe.go.kr/openApi/sidoSigunguCode.do   
 > 유치원알리미 사이트 제공 - https://e-childschoolinfo.moe.go.kr/openApi/openApiList.do
  - 시도시군구코드 엑셀파일 -> json 변환
  - http://shancarter.github.io/mr-data-converter/ (json format 변환)
