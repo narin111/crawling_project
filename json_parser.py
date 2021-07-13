@@ -1,4 +1,5 @@
 # from _typeshed import SupportsDivMod
+### 한번에 작성
 import json
 from urllib.request import urlopen
 from urllib.parse import urlencode, unquote, quote_plus
@@ -106,43 +107,7 @@ for one in data: # sidosgg.json 추출
 
            
 
-    """
-
-    req = urllib.request.urlopen(teach_days+query) # 수업일수
-    res = req.readline()
-    j = json.loads(res)
-    jarray = j.get("kinderInfo")
-    for list in jarray:
-        ag3_lsn_dcnt = list.get("ag3_lsn_dcnt") # 3세 수업일수
-        ag5_lsn_dcnt = list.get("ag4_lsn_dcnt") # 4세 수업일수
-        ag5_lsn_dcnt = list.get("ag5_lsn_dcnt") # 5세 수업일수
-        mix_age_lsn_dcnt = list.get("mix_age_lsn_dcnt") # 혼합연령수업일수
-        spcl_lsn_dcnt = list.get("spcl_lsn_dcnt") # 특수학급수업일수
-        afsc_pros_lsn_dcnt = list.get("afsc_pros_lsn_dcnt") # 방과후 과정수업일수
-        ldnum_blw_yn = list.get("ldnum_blw_yn") # 법정일수이하여부
-        fdtn_kndr_yn = list.get("fdtn_kndr_yn") # 신설유치원여부
-        pbntTmng = list.get("pbntTmng") # 공시차수
-
-    req = urllib.request.urlopen(meal+query) # 직위 자격별 교직원현황
-    res = req.readline()
-    j = json.loads(res)
-    jarray = j.get("kinderInfo")
-    for list in jarray:
-        mlsr_oprn_way_tp_cd = list.get("mlsr_oprn_way_tp_cd") # 급식운영방식구분
-        cons_ents_nm = list.get("cons_ents_nm") # 위탁업체명
-        al_kpcnt = list.get("al_kpcnt") # 전체유아수
-        mlsr_kpcnt = list.get("mlsr_kpcnt") # 급식유아수
-        ntrt_tchr_agmt_yn = list.get("ntrt_tchr_agmt_yn") # 영양교사배치여부
-        snge_agmt_ntrt_thcnt = list.get("snge_agmt_ntrt_thcnt") # 단독배치영양교사수
-        cprt_agmt_ntrt_thcnt = list.get("cprt_agmt_ntrt_thcnt") # 공동배치영양교사수
-        ckcnt = list.get("ckcnt") # 조리사수
-        cmcnt = list.get("cmcnt") # 조리인력수
-        mas_mspl_dclr_yn = list.get("mas_mspl_dclr_yn") # 집단급식소신고여부
-        pbntTmng = list.get("pbntTmng") # 공시차수
-        
-        
-    """
-    
+ 
     # kinderList = requests.get(url+query).json()
     # kinders = kinderList["kinderInfo"]
     

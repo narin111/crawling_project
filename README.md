@@ -1,11 +1,11 @@
 # crawling_project
-- 유치원 크롤링
-- 어린이집 크롤링
+- 유치원 크롤링(childschool)
+- 어린이집 크롤링(kindergarten)
 
-
-# 크롤링, 스크래핑 코드 모음
 
 ## sidosgg.json 
+ - 시도시군구코드 엑셀파일 -> json 변환
+> https://e-childschoolinfo.moe.go.kr/openApi/sidoSigunguCode.do
  - http://shancarter.github.io/mr-data-converter/ (json format 변환)
  - https://jsonformatter.curiousconcept.com/ (json 형태 파일 다운로드)
 
