@@ -53,6 +53,8 @@ for one in data: # sidosgg.json 추출
     print(jarray[1].get("kindername"))
     print("==========$$$$$$$$$====")
     
+    for i in len(jarray):
+        print()
     for list in jarray:
         kindername = list.get("kindername")
         officeedu = list.get("officeedu") # 교육청명
