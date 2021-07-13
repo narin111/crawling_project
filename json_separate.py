@@ -166,14 +166,17 @@ for one in data: # sidosgg.json 추출
         print("%%%%%%%")
         print(kindercode)
         # codesame = next((item for item in kinder_list if['kindercode'] == kindercode), None)
-        # codesame = next((item for item in kinder_list if item['kindercode'] == kindercode ), None)
+        codesame = next((item for item in kinder_list if item['kindercode'] == kindercode ), None)
+        kinder_list.pop(next((item for item in kinder_list if item['kindercode'] == kindercode ), None))
         # print("*******")
         # print(codesame)
         # print("\n")
         
        
 
-        { **next((item for item in kinder_list if item['kindercode'] == kindercode ), None), **teach_doc } # kinderCode가 같은 dictionary끼리 합침
+        codesame = { **codesame, **teach_doc } # kinderCode가 같은 dictionary끼리 합침
+        kinder_list.append(codesame)
+        ## 딕셔너리 삭제하고 합친 딕셔너리 넣을까 고민
 
     print("딕셔너리 합친 후")    
     print(kinder_list)
