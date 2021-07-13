@@ -6,6 +6,12 @@ import urllib.request
 import requests
 import time
 
+from pymongo import MongoClient
+client = MongoClient('localhost', 27017)
+db = client.dbkinderapi # local
+
+
+
 
 with open('sidosgg.json', encoding='UTF8') as file:
     data = json.load(file)
@@ -49,8 +55,7 @@ for one in data: # sidosgg.json 추출
     res = req.readline()
     j = json.loads(res)
     jarray = j.get("kinderInfo")
-    for i in len(jarray):
-        print()
+    
     for list in jarray:
         kindername = list.get("kindername")
         officeedu = list.get("officeedu") # 교육청명
@@ -71,14 +76,34 @@ for one in data: # sidosgg.json 추출
         mixppcnt = list.get("mixppcnt") # 혼합유아수
         shppcnt = list.get("shppcnt") # 특수유아수
         pbnttmng = list.get("pbnttmng") # 공시차수
-        
+        #
+        # basic_doc = {
+        #     "kindername" : list.get("kindername")
+        # }
         basic_doc = {
             "kindername" : kindername,
-            "officeedu" : officeedu
+            "officeedu" : officeedu,
+            "subofficedu" : subofficeedu,
+            "kinderCode" : kinderCode,
+            "establish" : establish,
+            "rppname" : rppname,
+            "ldgrname" : ldgrname,
+            "edate" : edate,
+            "odate" : odate,
+            "addr" : addr,
+            "telno" : telno,
+            "hpaddr" : hpaddr,
+            "opertime" : opertime,
+            "clcnt3" : clcnt3,
+            "clcnt4" : clcnt4,
+            "clcnt5" : clcnt5,
+            "mixppcnt" : mixppcnt,
+            "shppcnt" : shppcnt,
+            "pbnttmng" : pbnttmng
         }
 
-        # db.kinder.insert_one(basic_doc)
-           
+        db.kinder_basic.insert_one(basic_doc)
+        #  
     
     # 직위 자격별 교직원현황
     req = urllib.request.urlopen(teach+query) 
@@ -107,6 +132,15 @@ for one in data: # sidosgg.json 추출
         rgth_gd2_qacnt = list.get("rgth_gd2_qacnt") # 정교사2급자격수
         asth_qacnt = list.get("asth_qacnt") # 준교사 자격수
         pbntTmng = list.get("pbntTmng") # 공시차수
+
+        #
+        teach_doc = {
+            "drcnt" : drcnt,
+            "adcnt" : adcnt
+        }
+
+        db.kinder_teach.insert_one(teach_doc)
+        # 
 
 
     # 수업일수 현황
@@ -294,6 +328,3 @@ for one in data: # sidosgg.json 추출
 
        
         
-
-
-

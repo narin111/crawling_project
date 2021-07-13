@@ -102,9 +102,7 @@ for one in data: # sidosgg.json 추출
             print(clcnt3, clcnt4, clcnt5, mixppcnt, shppcnt)
             print(drcnt, adcnt, hdst_thcnt, asps_thcnt)
 
-            doc = {
-                
-            }
+           
 
     """
     for list in jarray:
@@ -119,22 +117,7 @@ for one in data: # sidosgg.json 추출
     j = json.loads(res)
     jarray = j.get("kinderInfo")
     for list in jarray:
-        drcnt = list.get("drcnt") # 원장수
-        adcnt = list.get("adcnt") # 원감수
-        hdst_thcnt = list.get("hdst_thcnt") # 수석교사수
-        asps_thcnt = list.get("asps_thcnt") # 보직교사수
-        gnrl_thcnt = list.get("gnrl_thcnt") # 일반교사수
-        spcn_thcnt = list.get("spcn_thcnt") # 특수교사수
-        ntcnt = list.get("ntcnt") # 보건교사수
-        ntrt_thcnt = list.get("ntrt_thcnt") # 영양교사수
-        shcnt_thcnt = list.get("shcnt_thcnt") #기간제교사수
-        incnt = list.get("incnt") # 강사수
-        owcnt = list.get("owcnt") # 사무직원수
-        hdst_tchr_qacnt = list.get("hdst_tchr_qacnt") # 수석교사자격수
-        rgth_gd1_qacnt = list.get("rgth_gd1_qacnt") # 공정교사1급자격수
-        rgth_gd2_qacnt = list.get("rgth_gd2_qacnt") # 정교사2급자격수
-        asth_qacnt = list.get("asth_qacnt") # 준교사 자격수
-        pbntTmng = list.get("pbntTmng") # 공시차수
+        
 
     req = urllib.request.urlopen(teach_days+query) # 직위 자격별 교직원현황
     res = req.readline()
