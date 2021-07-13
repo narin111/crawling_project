@@ -102,7 +102,7 @@ for one in data: # sidosgg.json 추출
             "pbnttmng" : pbnttmng
         }
 
-        db.kinder_basic.insert_one(basic_doc)
+        db.kinder_basic.insert_one(basic_doc)  # bulk write(insertOne)로 수정하기
         #  
     
     # 직위 자격별 교직원현황

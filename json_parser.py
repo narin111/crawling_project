@@ -96,6 +96,8 @@ for one in data: # sidosgg.json 추출
             rgth_gd2_qacnt = jarr_teach[i].get("rgth_gd2_qacnt") # 정교사2급자격수
             asth_qacnt = jarr_teach[i].get("asth_qacnt") # 준교사 자격수
             pbntTmng = jarr_teach[i].get("pbntTmng") # 공시차수
+
+
             
             
             print(kindername, officeedu, subofficeedu, kinderCode, establish, rppname, ldgrname, edate, odate, addr, telno, hpaddr, opertime)
@@ -154,10 +156,8 @@ for one in data: # sidosgg.json 추출
 
 
 
-#건물현황 https://e-childschoolinfo.moe.go.kr/api/notice/building.do
-#교실면적현황 https://e-childschoolinfo.moe.go.kr/api/notice/classArea.do
 
-'http://apis.data.go.kr/1360000/AsosDalyInfoService/getWthrDataList'
+# ' '
 
 
 
