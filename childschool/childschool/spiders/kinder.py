@@ -37,7 +37,7 @@ class KinderSpider(scrapy.Spider):
         print(int(last_page))
 
         # 페이지별로 parse_pagekinder 함수 호출
-        for i in range(1, last_page+1):
+        for i in range(1, int(last_page)+1):
         # for i in range(1, 2):
             page_url = 'https://e-childschoolinfo.moe.go.kr/kinderMt/combineFind.do?pageIndex={}&pageCnt=50'.format(i)
             yield scrapy.Request(url = page_url, callback = self.parse_pagekinder, meta={'page_kinder':page_url})
