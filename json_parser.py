@@ -40,7 +40,6 @@ for one in data: # sidosgg.json 추출
     print("==============")
     print(sidoCode, sggCode)
     print("==============")
-    # queryParams = '?' + urlencode({ quote_plus('key') : '2039b8c5db3c4385b39b00ae74b783cc', quote_plus('sidoCode') : str(sidoCode) , quote_plus('sggCode') : str(sggCode) })
     query = '?' + "key=" + apikey + "&sidoCode=" + str(sidoCode) + "&sggCode=" + str(sggCode)
     
     url = basic
@@ -98,6 +97,7 @@ for one in data: # sidosgg.json 추출
             asth_qacnt = jarr_teach[i].get("asth_qacnt") # 준교사 자격수
             pbntTmng = jarr_teach[i].get("pbntTmng") # 공시차수
             
+            
             print(kindername, officeedu, subofficeedu, kinderCode, establish, rppname, ldgrname, edate, odate, addr, telno, hpaddr, opertime)
             print(clcnt3, clcnt4, clcnt5, mixppcnt, shppcnt)
             print(drcnt, adcnt, hdst_thcnt, asps_thcnt)
@@ -105,21 +105,8 @@ for one in data: # sidosgg.json 추출
            
 
     """
-    for list in jarray:
-        
-        
-        print(kindername, officeedu, subofficeedu, kinderCode, establish, rppname, ldgrname, edate, odate, addr, telno, hpaddr, opertime)
-        print(clcnt3, clcnt4, clcnt5, mixppcnt, shppcnt)
-    
-    
-    req = urllib.request.urlopen(teach+query) # 직위 자격별 교직원현황
-    res = req.readline()
-    j = json.loads(res)
-    jarray = j.get("kinderInfo")
-    for list in jarray:
-        
 
-    req = urllib.request.urlopen(teach_days+query) # 직위 자격별 교직원현황
+    req = urllib.request.urlopen(teach_days+query) # 수업일수
     res = req.readline()
     j = json.loads(res)
     jarray = j.get("kinderInfo")
