@@ -11,8 +11,6 @@ client = MongoClient('localhost', 27017)
 db = client.dbkinderapi # local
 
 
-
-
 with open('sidosgg.json', encoding='UTF8') as file:
     data = json.load(file)
 
@@ -62,7 +60,7 @@ for one in data: # sidosgg.json 추출
         kindername = list.get("kindername")
         officeedu = list.get("officeedu") # 교육청명
         subofficeedu = list.get("subofficeedu") # 교육지원청명
-        kinderCode = list.get("kindercode") # 유치원코드
+        kindercode = list.get("kindercode") # 유치원코드
         establish = list.get("establish") # 설립유형
         rppname = list.get("rppnname") # 대표자명
         ldgrname = list.get("ldgrname") # 원장명
@@ -86,7 +84,7 @@ for one in data: # sidosgg.json 추출
             "kindername" : kindername,
             "officeedu" : officeedu,
             "subofficedu" : subofficeedu,
-            "kinderCode" : kinderCode,
+            "kindercode" : kindercode,
             "establish" : establish,
             "rppname" : rppname,
             "ldgrname" : ldgrname,
@@ -108,16 +106,19 @@ for one in data: # sidosgg.json 추출
         #  
         kinder_list.append(basic_doc)
     
+    print("######") # 리스트에 딕셔너리 들어가는지 확인 
+    for i in kinder_list:
+        print(i)
+    print("######")
+
+
     # 직위 자격별 교직원현황
-    # 딕셔너리 list에서 kinderCode가 같은 딕셔너리와 딕셔너리 합치기
     req = urllib.request.urlopen(teach+query) 
     res = req.readline()
     j = json.loads(res)
     jarray = j.get("kinderInfo")
     for list in jarray:
         kindername = list.get("kindername")
-        print("####")
-        print(kindername)
         officeedu = list.get("officeedu") # 교육청명
         subofficeedu = list.get("subofficeedu") # 교육지원청명
         kindercode = list.get("kindercode") # 유치원코드
@@ -159,14 +160,25 @@ for one in data: # sidosgg.json 추출
             "pbntTmng" : pbntTmng
         }
 
+        # 딕셔너리 list에서 kindercode가 같은 딕셔너리와 딕셔너리 합치기
         # 가장 먼저 검색되는 dict 반환
-        Codesame = next((item for item in kinder_list if['kindercode'] == kindercode), None) # kinder_list에서 kinderCode가 같은 유치원 검색
+        # kinder_list에서 kinderCode가 같은 유치원 검색
+        print("%%%%%%%")
+        print(kindercode)
+        # codesame = next((item for item in kinder_list if['kindercode'] == kindercode), None)
+        # codesame = next((item for item in kinder_list if item['kindercode'] == kindercode ), None)
+        # print("*******")
+        # print(codesame)
+        # print("\n")
+        
        
 
-        # Codesame = { **Codesame, **teach_doc } # kinderCode가 같은 dictionary끼리 합침
+        { **next((item for item in kinder_list if item['kindercode'] == kindercode ), None), **teach_doc } # kinderCode가 같은 dictionary끼리 합침
 
-        for key, value in Codesame.items():
-            print(key)
+    print("딕셔너리 합친 후")    
+    print(kinder_list)
+        
+    
         
         
 
