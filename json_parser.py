@@ -1,5 +1,5 @@
 # from _typeshed import SupportsDivMod
-### 한번에 작성
+### 다른코드 사용
 import json
 from urllib.request import urlopen
 from urllib.parse import urlencode, unquote, quote_plus

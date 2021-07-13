@@ -48,6 +48,8 @@ for one in data: # sidosgg.json 추출
     print("==============")
 
     query = '?' + "key=" + apikey + "&sidoCode=" + str(sidoCode) + "&sggCode=" + str(sggCode)
+
+    kinder_list = []
     
     # 기본현황
     url = basic
@@ -102,10 +104,12 @@ for one in data: # sidosgg.json 추출
             "pbnttmng" : pbnttmng
         }
 
-        db.kinder_basic.insert_one(basic_doc)  # bulk write(insertOne)로 수정하기
+        # db.kinder_basic.insert_one(basic_doc)  # bulk write(insertOne)로 수정하기
         #  
+        kinder_list.append(basic_doc)
     
     # 직위 자격별 교직원현황
+    # 딕셔너리 list에서 kinderCode가 같은 딕셔너리와 딕셔너리 합치기
     req = urllib.request.urlopen(teach+query) 
     res = req.readline()
     j = json.loads(res)
@@ -136,10 +140,28 @@ for one in data: # sidosgg.json 추출
         #
         teach_doc = {
             "drcnt" : drcnt,
-            "adcnt" : adcnt
+            "adcnt" : adcnt,
+            "hdst_thcnt" : hdst_thcnt,
+            "asps_thcnt" : asps_thcnt,
+            "gnrl_thcnt" : gnrl_thcnt,
+            "spcn_thcnt" : spcn_thcnt,
+            "ntcnt" : ntcnt,
+            "ntrt_thcnt" : ntrt_thcnt,
+            "shcnt_thcnt" : shcnt_thcnt,
+            "incnt" : incnt,
+            "owcnt" : owcnt,
+            "hdst_tchr_qacnt" : hdst_tchr_qacnt,
+            "rgth_gd1_qacnt" : rgth_gd1_qacnt,
+            "rgth_gd2_qacnt" : rgth_gd2_qacnt,
+            "asth_qacnt" : asth_qacnt,
+            "pbntTmng" : pbntTmng
         }
 
-        db.kinder_teach.insert_one(teach_doc)
+        Codesame = (item for item in kinder_list if['kinderCode'] == kinderCode) # kinder_list에서 kinderCode가 같은 유치원에 딕셔너리 합침
+        
+        
+
+        # db.kinder_teach.insert_one(teach_doc)
         # 
 
 
@@ -327,4 +349,5 @@ for one in data: # sidosgg.json 추출
 
 
        
-        
+    
+    # list 개수 만큼 db에 추가
