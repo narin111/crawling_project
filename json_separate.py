@@ -76,15 +76,15 @@ for one in data: # sidosgg.json 추출
         clcnt5 = list.get("clcnt5") # 만 5세 학급수
         mixppcnt = list.get("mixppcnt") # 혼합유아수
         shppcnt = list.get("shppcnt") # 특수유아수
-        pbnttmng = list.get("pbnttmng") # 공시차수
+        pbnTtmng = list.get("pbnttmng") # 공시차수
         #
         # basic_doc = {
         #     "kindername" : list.get("kindername")
         # }
-        basic_doc = {
+        basic_dict = {
             "kindername" : kindername,
             "officeedu" : officeedu,
-            "subofficedu" : subofficeedu,
+            "subofficeedu" : subofficeedu,
             "kindercode" : kindercode,
             "establish" : establish,
             "rppname" : rppname,
@@ -100,17 +100,17 @@ for one in data: # sidosgg.json 추출
             "clcnt5" : clcnt5,
             "mixppcnt" : mixppcnt,
             "shppcnt" : shppcnt,
-            "pbnttmng" : pbnttmng
+            "pbnTtmng" : pbnTtmng
         }
 
         # db.kinder_basic.insert_one(basic_doc)  # bulk write(insertOne)로 수정하기
         #  
-        kinder_list.append(basic_doc)
+        kinder_list.append(basic_dict)
     
-    print("######") # 리스트에 딕셔너리 들어가는지 확인 
-    for i in kinder_list:
-        print(i)
-    print("######")
+    # print("######") # 리스트에 딕셔너리 들어가는지 확인 
+    # for i in kinder_list:
+    #     print(i)
+    # print("######")
 
 
     # 직위 자격별 교직원현황
@@ -119,7 +119,7 @@ for one in data: # sidosgg.json 추출
     j = json.loads(res)
     jarray = j.get("kinderInfo")
     for list in jarray:
-        kindername = list.get("kindername")
+        kindername_teach = list.get("kindername")
         officeedu = list.get("officeedu") # 교육청명
         subofficeedu = list.get("subofficeedu") # 교육지원청명
         kindercode = list.get("kindercode") # 유치원코드
@@ -141,9 +141,10 @@ for one in data: # sidosgg.json 추출
         asth_qacnt = list.get("asth_qacnt") # 준교사 자격수
         pbntTmng = list.get("pbntTmng") # 공시차수
 
+       
         #
-        teach_doc = {
-            "kindername_chk" : kindername,
+        teach_dict = {
+            "kindername_t" : kindername_teach,
             "drcnt" : drcnt,
             "adcnt" : adcnt,
             "hdst_thcnt" : hdst_thcnt,
@@ -159,7 +160,7 @@ for one in data: # sidosgg.json 추출
             "rgth_gd1_qacnt" : rgth_gd1_qacnt,
             "rgth_gd2_qacnt" : rgth_gd2_qacnt,
             "asth_qacnt" : asth_qacnt,
-            "pbntTmng" : pbntTmng
+            # "pbntTmng" : pbntTmng
         }
 
         # 딕셔너리 list에서 kindercode가 같은 딕셔너리와 딕셔너리 합치기
@@ -172,28 +173,20 @@ for one in data: # sidosgg.json 추출
         kinder_list.pop(index)
     
         # kinderCode가 같은 dictionary끼리 합쳐 list append
-        codesame = { **codesame, **teach_doc } 
+        codesame = { **codesame, **teach_dict } 
         kinder_list.append(codesame)
-         
 
-    print("딕셔너리 합친 후")    
-    print(kinder_list)
-        
-    
-        
-        
-
-        # db.kinder_teach.insert_one(teach_doc)
-        # 
 
 
     # 수업일수 현황
-    req = urllib.request.urlopen(teach+query) 
+    ## API상에서 유치원 코드 다 동일하게 되어있다.
+    req = urllib.request.urlopen(teach_days+query) 
+
     res = req.readline()
     j = json.loads(res)
     jarray = j.get("kinderInfo")
     for list in jarray:
-        kindername = list.get("kindername")
+        kindername_teachdays = list.get("kindername")
         officeedu = list.get("officeedu") # 교육청명
         subofficeedu = list.get("subofficeedu") # 교육지원청명
         kindercode = list.get("kindercode") # 유치원코드
@@ -208,6 +201,32 @@ for one in data: # sidosgg.json 추출
         fdtn_kndr_yn = list.get("fdtn_kndr_yn")
         pbntTmng = list.get("pbntTmng")
 
+        teachdays_dict = {
+            "kindername_tdays" : kindername_teachdays,
+            "ag3_lsn_dcnt" : ag3_lsn_dcnt,
+            "ag4_lsn_dcnt" : ag4_lsn_dcnt,
+            "ag5_lsn_dcnt" : ag5_lsn_dcnt,
+            "mix_age_lsn_dcnt" : mix_age_lsn_dcnt,
+            "spcl_lsn_dcnt" : spcl_lsn_dcnt,
+            "afsc_pros_lsn_dcnt" : afsc_pros_lsn_dcnt,
+            "ldnum_blw_yn" : ldnum_blw_yn,
+            "fdtn_kndr_yn" : fdtn_kndr_yn,
+            "pbntTmng" : pbntTmng 
+
+        }
+    
+
+        codesame = next((item for item in kinder_list if item['kindercode'] == kindercode ), None)
+        index = next((index for (index, item) in enumerate(kinder_list) if item['kindercode'] == kindercode), None)
+        kinder_list.pop(index)
+        codesame = { **codesame, **teachdays_dict } 
+        kinder_list.append(codesame)
+
+
+    # print("딕셔너리 합침")
+    # for i in range(len(kinder_list)):
+    #     print(kinder_list[i])
+
 
 
     # 급식운영현황
@@ -216,7 +235,7 @@ for one in data: # sidosgg.json 추출
     j = json.loads(res)
     jarray = j.get("kinderInfo")
     for list in jarray:
-        kindername = list.get("kindername")
+        kindername_meal = list.get("kindername")
         officeedu = list.get("officeedu") # 교육청명
         subofficeedu = list.get("subofficeedu") # 교육지원청명
         kindercode = list.get("kindercode") # 유치원코드
@@ -233,7 +252,27 @@ for one in data: # sidosgg.json 추출
         mas_mspl_dclr_yn = list.get("mas_mspl_dclr_yn")
         pbntTmng = list.get("pbntTmng")
 
+        meal_dict = {
+            "kindername_meal" : kindername_meal,
+            "mlsr_oprn_way_tp_cd" : mlsr_oprn_way_tp_cd,
+            "cons_ents_nm" : cons_ents_nm,
+            "al_kpcnt" : al_kpcnt,
+            "mlsr_kpcnt" : mlsr_kpcnt,
+            "ntrt_tchr_agmt_yn" : ntrt_tchr_agmt_yn,
+            "snge_agmt_ntrt_thcnt" : snge_agmt_ntrt_thcnt,
+            "cprt_agmt_ntrt_thcnt" : cprt_agmt_ntrt_thcnt,
+            "ckcnt" : ckcnt,
+            "cmcnt" : cmcnt,
+            "mas_mspl_dclr_yn" : mas_mspl_dclr_yn,
+            "pbntTmng" : pbntTmng
+        }
 
+        codesame = next((item for item in kinder_list if item['kindercode'] == kindercode ), None)
+        index = next((index for (index, item) in enumerate(kinder_list) if item['kindercode'] == kindercode), None)
+        kinder_list.pop(index)
+        codesame = { **codesame, **meal_dict } 
+        kinder_list.append(codesame)
+    
 
     # 통학차량운영
     req = urllib.request.urlopen(bus+query) 
@@ -241,7 +280,7 @@ for one in data: # sidosgg.json 추출
     j = json.loads(res)
     jarray = j.get("kinderInfo")
     for list in jarray:
-        kindername = list.get("kindername")
+        kindername_bus = list.get("kindername")
         officeedu = list.get("officeedu") # 교육청명
         subofficeedu = list.get("subofficeedu") # 교육지원청명
         kindercode = list.get("kindercode") # 유치원코드
@@ -254,6 +293,26 @@ for one in data: # sidosgg.json 추출
         psg15_dclr_vhcnt = list.get("psg15_dclr_vhcnt")
         pbntTmng = list.get("pbntTmng")
 
+        bus_dict = {
+            "kindername_bus" : kindername_bus,
+            "vhcl_oprn_yn" : vhcl_oprn_yn,
+            "opra_vhcnt" : opra_vhcnt,
+            "dclr_vhcnt" : dclr_vhcnt,
+            "psg9_dclr_vhcnt" : psg9_dclr_vhcnt,
+            "psg12_dclr_vhcnt" : psg12_dclr_vhcnt,
+            "psg15_dclr_vhcnt" : psg15_dclr_vhcnt,
+            "pbntTmng" : pbntTmng
+        }
+
+        codesame = next((item for item in kinder_list if item['kindercode'] == kindercode ), None)
+        index = next((index for (index, item) in enumerate(kinder_list) if item['kindercode'] == kindercode), None)
+        kinder_list.pop(index)
+        codesame = { **codesame, **bus_dict } 
+        kinder_list.append(codesame)
+
+    
+
+    
     
     # 근속연수운영
     req = urllib.request.urlopen(work_year+query) 
@@ -261,7 +320,7 @@ for one in data: # sidosgg.json 추출
     j = json.loads(res)
     jarray = j.get("kinderInfo")
     for list in jarray:
-        kindername = list.get("kindername")
+        kindername_workyear = list.get("kindername")
         officeedu = list.get("officeedu") # 교육청명
         subofficeedu = list.get("subofficeedu") # 교육지원청명
         kindercode = list.get("kindercode") # 유치원코드
@@ -273,6 +332,22 @@ for one in data: # sidosgg.json 추출
         yy6_abv_thcnt = list.get("yy6_abv_thcnt")
         pbntTmng = list.get("pbntTmng")
 
+        workyear_dict = {
+            "kindername_worky" : kindername_workyear,
+            "yy1_undr_thcnt" : yy1_undr_thcnt,
+            "yy1_abv_yy2_undr_thcnt" : yy1_abv_yy2_undr_thcnt,
+            "yy2_abv_yy4_undr_thcnt" : yy2_abv_yy4_undr_thcnt,
+            "yy4_abv_yy6_undr_thcnt" : yy4_abv_yy6_undr_thcnt,
+            "yy6_abv_thcnt" : yy6_abv_thcnt,
+            "pbntTmng" : pbntTmng
+        }
+
+        codesame = next((item for item in kinder_list if item['kindercode'] == kindercode ), None)
+        index = next((index for (index, item) in enumerate(kinder_list) if item['kindercode'] == kindercode), None)
+        kinder_list.pop(index)
+        codesame = { **codesame, **workyear_dict } 
+        kinder_list.append(codesame)
+
     
     # 환경위생관리
     req = urllib.request.urlopen(enviro+query) 
@@ -280,7 +355,7 @@ for one in data: # sidosgg.json 추출
     j = json.loads(res)
     jarray = j.get("kinderInfo")
     for list in jarray:
-        kindername = list.get("kindername")
+        kindername_envir = list.get("kindername")
         officeedu = list.get("officeedu") # 교육청명
         subofficeedu = list.get("subofficeedu") # 교육지원청명
         kindercode = list.get("kindercode") # 유치원코드
@@ -303,6 +378,27 @@ for one in data: # sidosgg.json 추출
         ilmn_chk_rslt_cd = list.get("ilmn_chk_rslt_cd")
         pbntTmng = list.get("pbntTmng")
 
+        envir_dict = {
+            "kindername_envir" : kindername_envir,
+            "arql_chk_dt" : arql_chk_dt,
+            "arql_chk_rslt_tp_cd" : arql_chk_rslt_tp_cd,
+            "fxtm_dsnf_trgt_yn" : fxtm_dsnf_trgt_yn,
+            "fxtm_dsnf_chk_dt" : fxtm_dsnf_chk_dt,
+            "fxtm_dsnf_chk_rslt_tp_cd" : fxtm_dsnf_chk_rslt_tp_cd,
+            "qlwt_insc_dt" : qlwt_insc_dt,
+            "mdst_chk_dt" : mdst_chk_dt,
+            "mdst_chk_rslt_cd" : mdst_chk_rslt_cd,
+            "ilmn_chk_dt" : ilmn_chk_dt,
+            "ilmn_chk_rslt_cd" : ilmn_chk_rslt_cd,
+            "pbntTmng" : pbntTmng
+        }
+
+        codesame = next((item for item in kinder_list if item['kindercode'] == kindercode ), None)
+        index = next((index for (index, item) in enumerate(kinder_list) if item['kindercode'] == kindercode), None)
+        kinder_list.pop(index)
+        codesame = { **codesame, **envir_dict } 
+        kinder_list.append(codesame)
+
 
     # 안전점검, 교육실시 현황
     req = urllib.request.urlopen(safety+query) 
@@ -310,7 +406,7 @@ for one in data: # sidosgg.json 추출
     j = json.loads(res)
     jarray = j.get("kinderInfo")
     for list in jarray:
-        kindername = list.get("kindername")
+        kindername_saf = list.get("kindername")
         officeedu = list.get("officeedu") # 교육청명
         subofficeedu = list.get("subofficeedu") # 교육지원청명
         kindercode = list.get("kindercode") # 유치원코드
@@ -331,6 +427,39 @@ for one in data: # sidosgg.json 추출
         cctv_ist_in = list.get("cctv_ist_in")
         cctv_ist_out = list.get("cctv_ist_out")
         pbntTmng = list.get("pbntTmng")
+
+        safety_dict = {
+            "kinder_saf" : kindername_saf,
+            "fire_avd_yn" : fire_avd_yn,
+            "fire_avd_dt" : fire_avd_dt,
+            "gas_ck_yn" : gas_ck_yn,
+            "gas_ck_dt" : gas_ck_dt,
+            "fire_safe_yn" : fire_safe_yn,
+            "fire_safe_dt" : fire_safe_dt,
+            "elect_ck_yn" : elect_ck_yn,
+            "elect_ck_dt" : elect_ck_dt,
+            "plyg_ck_yn" : plyg_ck_yn,
+            "plyg_ck_dt" : plyg_ck_dt,
+            "plyg_ck_rs_cd" : plyg_ck_rs_cd,
+            "cctv_ist_yn" : cctv_ist_yn,
+            "cctv_ist_total" : cctv_ist_total,
+            "cctv_ist_in" : cctv_ist_in,
+            "cctv_ist_out" : cctv_ist_out,
+            "pbntTmng" : pbntTmng
+
+        }
+
+        codesame = next((item for item in kinder_list if item['kindercode'] == kindercode ), None)
+        index = next((index for (index, item) in enumerate(kinder_list) if item['kindercode'] == kindercode), None)
+        kinder_list.pop(index)
+        codesame = { **codesame, **safety_dict } 
+        kinder_list.append(codesame)
+
+    
+
+    print("딕셔너리 합침")
+    for i in range(len(kinder_list)):
+        print(kinder_list[i])
     
 
     # 공제회가입현황
@@ -373,3 +502,5 @@ for one in data: # sidosgg.json 추출
        
     
     # list 개수 만큼 db에 추가
+    # list 초기화
+    kinder_list.clear()
