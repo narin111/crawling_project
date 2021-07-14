@@ -1,13 +1,15 @@
 import scrapy
 from selenium import webdriver
 import pymongo
+import time
+from pymongo import InsertOne 
 
 from pymongo import MongoClient
 client = MongoClient('localhost', 27017)
 db = client.dbchildshcoolsite # local
 
-# path = 'C:/Users/LG/Desktop/scrapy_prac/pagescrapy/chromedriver.exe'
-path = 'D:/Desktop/crawling_project/childschool/chromedriver.exe'
+path = 'C:/Users/LG/Desktop/현장실습/chromedriver.exe'
+# path = 'D:/Desktop/crawling_project/childschool/chromedriver.exe'
 
 options = webdriver.ChromeOptions()
 options.add_argument('headless')
@@ -38,7 +40,8 @@ class KinderSpider(scrapy.Spider):
         print(int(last_page))
 
         
-        for i in range(1, int(last_page)+1):
+        # for i in range(1, int(last_page)+1):
+        for i in range(1, 3):
             page_url = 'https://e-childschoolinfo.moe.go.kr/kinderMt/combineFind.do?pageIndex={}&pageCnt=50'.format(i)
             yield scrapy.Request(url = page_url, callback = self.parse_pagekinder, meta={'page_kinder':page_url})
             
@@ -48,10 +51,13 @@ class KinderSpider(scrapy.Spider):
        
 
         driver.get(response.meta['page_kinder'])
-        
+        time.sleep(0.5)
         kinder_listnum = driver.find_elements_by_css_selector("#resultArea > div.lists > ul > li")
         print("&&&&&&&")
         print(response.meta['page_kinder'])
+
+        # db 효율적
+        bulk_list = []
 
         for i in range(1, len(kinder_listnum) +1 ):
             
@@ -338,9 +344,9 @@ class KinderSpider(scrapy.Spider):
                     "kinder_mix_age34" : { "class" : kin34_class, "total_num" : kin34_totnum, "current_num" : kin34_currnum},
                     "kinder_mix_age45" : { "class" : kin45_class, "total_num" : kin45_totnum, "current_num" : kin45_currnum},
                     "kinder_mix_age35" : { "class" : kin35_class, "total_num" : kin35_totnum, "current_num" : kin35_currnum},
-                    "kinder_special" : { "class" : kin_sp_class, "total_num" : kin_sp_totnum, "current_num" : kin_sp_currnum},
+                    "kinder_special" : { "class" : kin_sp_class, "total_num" : kin_sp_totnum, "current_num" : kin_sp_currnum}
                     
-                    "kinder_insurance" : insur_total
+                    # "kinder_insurance" : insur_total
 
 
                 }
@@ -348,7 +354,8 @@ class KinderSpider(scrapy.Spider):
                 print(kinder_name)
                 print("\n")
                 # list 만들어서 저장후 bulkwrite하기
-                db.kindergarden.insert_one(kinder_doc) # local
+                # db.kindergarden_test.insert_one(kinder_doc) # local
+                bulk_list.append(InsertOne(kinder_doc))
                 # db.kinder.insert_one(kinder_doc) # epic_testdb
 
             basic_age3.clear()
@@ -365,3 +372,5 @@ class KinderSpider(scrapy.Spider):
             aftoption_age5.clear()
             # safety_check.clear()
             # kinder_bus.clear()
+        
+        db.kinder_bulktest.bulk_write(bulk_list)
