@@ -14,7 +14,8 @@ options.add_argument('headless')
 options.add_argument('window-size=1920x1080')
 options.add_argument("disable-gpu")
 
-driver = webdriver.Chrome(path, chrome_options=options)
+# driver = webdriver.Chrome(path, chrome_options=options)
+driver = webdriver.Chrome(path)
 
 # connection = pymongo.MongoClient("")
 # db = connection.kinder_test
@@ -36,9 +37,8 @@ class KinderSpider(scrapy.Spider):
         last_page = last_page.split("=")[1]
         print(int(last_page))
 
-        # 페이지별로 parse_pagekinder 함수 호출
+        
         for i in range(1, int(last_page)+1):
-        # for i in range(1, 2):
             page_url = 'https://e-childschoolinfo.moe.go.kr/kinderMt/combineFind.do?pageIndex={}&pageCnt=50'.format(i)
             yield scrapy.Request(url = page_url, callback = self.parse_pagekinder, meta={'page_kinder':page_url})
             
@@ -48,13 +48,15 @@ class KinderSpider(scrapy.Spider):
        
 
         driver.get(response.meta['page_kinder'])
+        
         kinder_listnum = driver.find_elements_by_css_selector("#resultArea > div.lists > ul > li")
+        print("&&&&&&&")
+        print(response.meta['page_kinder'])
 
-        for i in range(1, len(kinder_listnum)+1):
-        # for i in range(1, 3):
+        for i in range(1, len(kinder_listnum) +1 ):
             
             driver.get(response.meta['page_kinder'])
-
+            
             ####
             baby_or_kinder = driver.find_element_by_css_selector("#resultArea > div.lists > ul > li:nth-child({}) > div.info > span".format(i)).text
             ## 어린이집일 때는 크롤링x
@@ -260,7 +262,7 @@ class KinderSpider(scrapy.Spider):
                         
                         option_index += 1
                 
-                """
+                
                 # 보건, 안전 탭
                 kinder_safe = driver.find_element_by_css_selector("#tabGroup > ul > li:nth-child(5) > a")
                 kinder_safe.click()
@@ -269,47 +271,34 @@ class KinderSpider(scrapy.Spider):
                 safety_btn = driver.find_element_by_css_selector("#tabMenus > ul > li:nth-child(2) > a")
                 safety_btn.click()
 
-                # 소방대피 훈련 여부
-                kinder_fire =  driver.find_element_by_css_selector("#idPrint > div:nth-child(4) > table > tbody > tr > td:nth-child(2)").text
-                fire_date = driver.find_element_by_css_selector("#idPrint > div:nth-child(4) > table > tbody > tr > td:nth-child(4)").text
+                
 
-                # 안전점검
-                safety_check = {}
-                safety_check["소방대피 훈련 여부"] = kinder_fire+"("+fire_date+")"
-                safety_chk = driver.find_element_by_css_selector("#idPrint > div:nth-child(6) > table")
-                chk_tbody = safety_chk.find_element_by_tag_name("tbody")
-                
-                tbody_rows = chk_tbody.find_elements_by_tag_name("tr")
-                for index, value in enumerate(tbody_rows):
-                    safety_item = value.find_elements_by_tag_name("th")[0].text
-                    check_ox = value.find_elements_by_tag_name("td")[0].text
-                    check_date = value.find_elements_by_tag_name("td")[1].text
-                    safety_check[safety_item] = check_ox+"("+check_date+")"
+                # 보험별 가입현황
+                insur_total = {}
 
-                # 통학차량 운영여부
-                kinder_bus = {}
-                bus_num = driver.find_element_by_css_selector("#idPrint > div:nth-child(10) > table")
-                bus_tbody = bus_num.find_element_by_tag_name("tbody")
-                
-                tbody_rows = bus_tbody.find_elements_by_tag_name("tr")
-                for index, value in enumerate(tbody_rows):
-                    kinder_bus["통학차량 운영여부"] = value.find_elements_by_tag_name("td")[0].text
-                    kinder_bus["9인승 이상"] = value.find_elements_by_tag_name("td")[3].text
-                    kinder_bus["12인승 이상"] = value.find_elements_by_tag_name("td")[4].text
-                    kinder_bus["15인승 이상"] = value.find_elements_by_tag_name("td")[5].text
-                    
-                for key, val in kinder_bus.items():
-                    print(key, val)
-                
-                # kinder_cctv = {}
-                # cctv_table = driver.find_element_by_css_selector("#idPrint > div:nth-child(20) > table")
-                # cctv_tbody = cctv_table.find_element_by_tag_name("tbody")
-                # tbody_rows = cctv_tbody.find_elements_by_tag_name("tr")
-                # for index, value in enumerate(tbody_rows):
-                    
-                """
-                
-               
+                per_table = driver.find_element_by_css_selector("#idPrint > div:nth-child(17) > table")
+                insur_tbody = per_table.find_element_by_tag_name("tbody")
+                cost_rows = insur_tbody.find_elements_by_tag_name("tr")
+                for index, value in enumerate(cost_rows):
+                    insur_detail = value.find_elements_by_tag_name("td")[0]
+                    target = value.find_elements_by_tag_name("td")[1]
+                    join = value.find_elements_by_tag_name("td")[2]
+                    comp1 = value.find_elements_by_tag_name("td")[3]
+                    comp2 = value.find_elements_by_tag_name("td")[4]
+                    comp3 = value.find_elements_by_tag_name("td")[5]
+
+                    insur_doc={
+                        "target" : target,
+                        "join" : join,
+                        "comp1" : comp1,
+                        "comp2" : comp2,
+                        "comp3" : comp3
+                    }
+                    insur_total[insur_detail] = insur_doc
+
+
+
+            
                 # 유치원 이름, 관할행정기관, 유치원 총정원수/현원수, 교직원 수, 제공서비스, 학급별 인원수, 학급별 비용, 혼합반
                 kinder_doc = {
                     "kinder_name" : kinder_name,
@@ -350,15 +339,15 @@ class KinderSpider(scrapy.Spider):
                     "kinder_mix_age45" : { "class" : kin45_class, "total_num" : kin45_totnum, "current_num" : kin45_currnum},
                     "kinder_mix_age35" : { "class" : kin35_class, "total_num" : kin35_totnum, "current_num" : kin35_currnum},
                     "kinder_special" : { "class" : kin_sp_class, "total_num" : kin_sp_totnum, "current_num" : kin_sp_currnum},
-
-                    # "kinder_safety"  : safety_check,
-                    # "kinder_bus" : kinder_bus
+                    
+                    "kinder_insurance" : insur_total
 
 
                 }
-
-                
-
+                print("\n")
+                print(kinder_name)
+                print("\n")
+                # list 만들어서 저장후 bulkwrite하기
                 db.kindergarden.insert_one(kinder_doc) # local
                 # db.kinder.insert_one(kinder_doc) # epic_testdb
 
