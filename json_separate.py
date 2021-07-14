@@ -47,6 +47,7 @@ for one in data: # sidosgg.json 추출
 
     query = '?' + "key=" + apikey + "&sidoCode=" + str(sidoCode) + "&sggCode=" + str(sggCode)
 
+    # 딕셔너리 리스트
     kinder_list = []
     
     # 기본현황
@@ -142,6 +143,7 @@ for one in data: # sidosgg.json 추출
 
         #
         teach_doc = {
+            "kindername_chk" : kindername,
             "drcnt" : drcnt,
             "adcnt" : adcnt,
             "hdst_thcnt" : hdst_thcnt,
@@ -163,20 +165,16 @@ for one in data: # sidosgg.json 추출
         # 딕셔너리 list에서 kindercode가 같은 딕셔너리와 딕셔너리 합치기
         # 가장 먼저 검색되는 dict 반환
         # kinder_list에서 kinderCode가 같은 유치원 검색
-        print("%%%%%%%")
-        print(kindercode)
-        # codesame = next((item for item in kinder_list if['kindercode'] == kindercode), None)
         codesame = next((item for item in kinder_list if item['kindercode'] == kindercode ), None)
-        kinder_list.pop(next((item for item in kinder_list if item['kindercode'] == kindercode ), None))
-        # print("*******")
-        # print(codesame)
-        # print("\n")
-        
-       
 
-        codesame = { **codesame, **teach_doc } # kinderCode가 같은 dictionary끼리 합침
+        # kinder dict list에서 인덱스찾아 지우기
+        index = next((index for (index, item) in enumerate(kinder_list) if item['kindercode'] == kindercode), None)
+        kinder_list.pop(index)
+    
+        # kinderCode가 같은 dictionary끼리 합쳐 list append
+        codesame = { **codesame, **teach_doc } 
         kinder_list.append(codesame)
-        ## 딕셔너리 삭제하고 합친 딕셔너리 넣을까 고민
+         
 
     print("딕셔너리 합친 후")    
     print(kinder_list)
