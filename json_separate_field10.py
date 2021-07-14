@@ -73,7 +73,7 @@ for one in data: # sidosgg.json 추출
         opertime = list.get("opertime") # 운영시간
         clcnt3 = list.get("clcnt3") # 만 3세 학급수
         clcnt4 = list.get("clcnt4") # 만 4세 학급수
-        clcnt5 = list.get("clcnt5") # 만 5세 학급수
+        clcnt5 = list.get("clcnt5") # 만 5세 학급수F
         mixppcnt = list.get("mixppcnt") # 혼합유아수
         shppcnt = list.get("shppcnt") # 특수유아수
         pbnTtmng = list.get("pbnttmng") # 공시차수
@@ -92,13 +92,11 @@ for one in data: # sidosgg.json 추출
             "telno" : telno,
             "hpaddr" : hpaddr,
             "opertime" : opertime,
-            "clcnt" : {
-                "clcnt3" : clcnt3,
-                "clcnt4" : clcnt4,
-                "clcnt5" : clcnt5,
-                "mixppcnt" : mixppcnt,
-                "shppcnt" : shppcnt
-            },   
+            "clcnt3" : clcnt3,
+            "clcnt4" : clcnt4,
+            "clcnt5" : clcnt5,
+            "mixppcnt" : mixppcnt,
+            "shppcnt" : shppcnt,
             "pbnTtmng" : pbnTtmng
         }
 
@@ -141,23 +139,19 @@ for one in data: # sidosgg.json 추출
             "kindername_t" : kindername_teach,
             "drcnt" : drcnt,
             "adcnt" : adcnt,
-            "thcnt" : {
-                "hdst_thcnt" : hdst_thcnt,
-                "asps_thcnt" : asps_thcnt,
-                "gnrl_thcnt" : gnrl_thcnt,
-                "spcn_thcnt" : spcn_thcnt,
-                "ntrt_thcnt" : ntrt_thcnt,
-                "shcnt_thcnt" : shcnt_thcnt
-            },
+            "hdst_thcnt" : hdst_thcnt,
+            "asps_thcnt" : asps_thcnt,
+            "gnrl_thcnt" : gnrl_thcnt,
+            "spcn_thcnt" : spcn_thcnt,
+            "ntrt_thcnt" : ntrt_thcnt,
+            "shcnt_thcnt" : shcnt_thcnt,
             "ntcnt" : ntcnt,
             "incnt" : incnt,
             "owcnt" : owcnt,
-            "qacnt" : {
-                "hdst_tchr_qacnt" : hdst_tchr_qacnt,
-                "rgth_gd1_qacnt" : rgth_gd1_qacnt,
-                "rgth_gd2_qacnt" : rgth_gd2_qacnt,
-                "asth_qacnt" : asth_qacnt,
-            }
+            "hdst_tchr_qacnt" : hdst_tchr_qacnt,
+            "rgth_gd1_qacnt" : rgth_gd1_qacnt,
+            "rgth_gd2_qacnt" : rgth_gd2_qacnt,
+            "asth_qacnt" : asth_qacnt
             # "pbntTmng" : pbntTmng
         }
 
@@ -171,7 +165,8 @@ for one in data: # sidosgg.json 추출
         kinder_list.pop(index)
     
         # kinderCode가 같은 dictionary끼리 합쳐 list append
-        codesame = { **codesame, **teach_dict } 
+        # codesame = { **codesame, **teach_dict } 
+        codesame['teachersInfo'] = teach_dict
         kinder_list.append(codesame)
 
 
@@ -201,14 +196,12 @@ for one in data: # sidosgg.json 추출
 
         teachdays_dict = {
             "kindername_tdays" : kindername_teachdays,
-            "lsn_dcnt" : {
-                 "ag3_lsn_dcnt" : ag3_lsn_dcnt,
-                "ag4_lsn_dcnt" : ag4_lsn_dcnt,
-                "ag5_lsn_dcnt" : ag5_lsn_dcnt,
-                "mix_age_lsn_dcnt" : mix_age_lsn_dcnt,
-                "spcl_lsn_dcnt" : spcl_lsn_dcnt,
-                "afsc_pros_lsn_dcnt" : afsc_pros_lsn_dcnt
-            },
+            "ag3_lsn_dcnt" : ag3_lsn_dcnt,
+            "ag4_lsn_dcnt" : ag4_lsn_dcnt,
+            "ag5_lsn_dcnt" : ag5_lsn_dcnt,
+            "mix_age_lsn_dcnt" : mix_age_lsn_dcnt,
+            "spcl_lsn_dcnt" : spcl_lsn_dcnt,
+            "afsc_pros_lsn_dcnt" : afsc_pros_lsn_dcnt,
             "ldnum_blw_yn" : ldnum_blw_yn,
             "fdtn_kndr_yn" : fdtn_kndr_yn,
             "pbntTmng" : pbntTmng 
@@ -219,7 +212,8 @@ for one in data: # sidosgg.json 추출
         codesame = next((item for item in kinder_list if item['kindercode'] == kindercode ), None)
         index = next((index for (index, item) in enumerate(kinder_list) if item['kindercode'] == kindercode), None)
         kinder_list.pop(index)
-        codesame = { **codesame, **teachdays_dict } 
+        # codesame = { **codesame, **teachdays_dict }
+        codesame['teach_days'] = teachdays_dict
         kinder_list.append(codesame)
 
 
@@ -265,7 +259,8 @@ for one in data: # sidosgg.json 추출
         codesame = next((item for item in kinder_list if item['kindercode'] == kindercode ), None)
         index = next((index for (index, item) in enumerate(kinder_list) if item['kindercode'] == kindercode), None)
         kinder_list.pop(index)
-        codesame = { **codesame, **meal_dict } 
+        # codesame = { **codesame, **meal_dict } 
+        codesame['meal'] = meal_dict
         kinder_list.append(codesame)
     
 
@@ -293,18 +288,17 @@ for one in data: # sidosgg.json 추출
             "vhcl_oprn_yn" : vhcl_oprn_yn,
             "opra_vhcnt" : opra_vhcnt,
             "dclr_vhcnt" : dclr_vhcnt,
-            "n_dclr_vhcnt" : {
-                "psg9_dclr_vhcnt" : psg9_dclr_vhcnt,
-                "psg12_dclr_vhcnt" : psg12_dclr_vhcnt,
-                "psg15_dclr_vhcnt" : psg15_dclr_vhcnt
-            },
+            "psg9_dclr_vhcnt" : psg9_dclr_vhcnt,
+            "psg12_dclr_vhcnt" : psg12_dclr_vhcnt,
+            "psg15_dclr_vhcnt" : psg15_dclr_vhcnt,
             "pbntTmng" : pbntTmng
         }
 
         codesame = next((item for item in kinder_list if item['kindercode'] == kindercode ), None)
         index = next((index for (index, item) in enumerate(kinder_list) if item['kindercode'] == kindercode), None)
         kinder_list.pop(index)
-        codesame = { **codesame, **bus_dict } 
+        # codesame = { **codesame, **bus_dict }
+        codesame['bus'] = bus_dict
         kinder_list.append(codesame)
 
     
@@ -331,21 +325,19 @@ for one in data: # sidosgg.json 추출
 
         workyear_dict = {
             "kindername_worky" : kindername_workyear,
-            "work_n_year" : {
-                "yy1_undr_thcnt" : yy1_undr_thcnt,
-                "yy1_abv_yy2_undr_thcnt" : yy1_abv_yy2_undr_thcnt,
-                "yy2_abv_yy4_undr_thcnt" : yy2_abv_yy4_undr_thcnt,
-                "yy4_abv_yy6_undr_thcnt" : yy4_abv_yy6_undr_thcnt,
-                "yy6_abv_thcnt" : yy6_abv_thcnt,
-            },
-            
+            "yy1_undr_thcnt" : yy1_undr_thcnt,
+            "yy1_abv_yy2_undr_thcnt" : yy1_abv_yy2_undr_thcnt,
+            "yy2_abv_yy4_undr_thcnt" : yy2_abv_yy4_undr_thcnt,
+            "yy4_abv_yy6_undr_thcnt" : yy4_abv_yy6_undr_thcnt,
+            "yy6_abv_thcnt" : yy6_abv_thcnt,
             "pbntTmng" : pbntTmng
         }
 
         codesame = next((item for item in kinder_list if item['kindercode'] == kindercode ), None)
         index = next((index for (index, item) in enumerate(kinder_list) if item['kindercode'] == kindercode), None)
         kinder_list.pop(index)
-        codesame = { **codesame, **workyear_dict } 
+        # codesame = { **codesame, **bus_dict }
+        codesame['work_year'] = workyear_dict
         kinder_list.append(codesame)
 
     
@@ -380,37 +372,29 @@ for one in data: # sidosgg.json 추출
 
         envir_dict = {
             "kindername_envir" : kindername_envir,
-            "arql_chk" : {
-                "arql_chk_dt" : arql_chk_dt,
-                "arql_chk_rslt_tp_cd" : arql_chk_rslt_tp_cd
-            },
-            "fxtm_chk" : {
-                "fxtm_dsnf_trgt_yn" : fxtm_dsnf_trgt_yn,
-                "fxtm_dsnf_chk_dt" : fxtm_dsnf_chk_dt,
-                "fxtm_dsnf_chk_rslt_tp_cd" : fxtm_dsnf_chk_rslt_tp_cd,
-            },   
-            "tp_n" : {
-                "tp_01" : tp_01, 
-                "tp_02" : tp_02,
-                "tp_03" : tp_03,
-                "tp_04" : tp_04,
-            },
+
+            "arql_chk_dt" : arql_chk_dt,
+            "arql_chk_rslt_tp_cd" : arql_chk_rslt_tp_cd,
+            "fxtm_dsnf_trgt_yn" : fxtm_dsnf_trgt_yn,
+            "fxtm_dsnf_chk_dt" : fxtm_dsnf_chk_dt,
+            "fxtm_dsnf_chk_rslt_tp_cd" : fxtm_dsnf_chk_rslt_tp_cd,
+            "tp_01" : tp_01, 
+            "tp_02" : tp_02,
+            "tp_03" : tp_03,
+            "tp_04" : tp_04,
             "qlwt_insc_dt" : qlwt_insc_dt,
-            "mdst_chk" : {
-                "mdst_chk_dt" : mdst_chk_dt,
-                "mdst_chk_rslt_cd" : mdst_chk_rslt_cd
-            },
-            "ilmn_chk" : {
-                "ilmn_chk_dt" : ilmn_chk_dt,
-                "ilmn_chk_rslt_cd" : ilmn_chk_rslt_cd,
-            },
+            "mdst_chk_dt" : mdst_chk_dt,
+            "mdst_chk_rslt_cd" : mdst_chk_rslt_cd,
+            "ilmn_chk_dt" : ilmn_chk_dt,
+            "ilmn_chk_rslt_cd" : ilmn_chk_rslt_cd,
             "pbntTmng" : pbntTmng
         }
 
         codesame = next((item for item in kinder_list if item['kindercode'] == kindercode ), None)
         index = next((index for (index, item) in enumerate(kinder_list) if item['kindercode'] == kindercode), None)
         kinder_list.pop(index)
-        codesame = { **codesame, **envir_dict } 
+        # codesame = { **codesame, **bus_dict }
+        codesame['environmentHygiene'] = envir_dict
         kinder_list.append(codesame)
 
 
@@ -446,25 +430,19 @@ for one in data: # sidosgg.json 추출
             "kinder_saf" : kindername_saf,
             "fire_avd_yn" : fire_avd_yn,
             "fire_avd_dt" : fire_avd_dt,
-            "saftey_chk" : {
-                "gas_ck_yn" : gas_ck_yn,
-                "gas_ck_dt" : gas_ck_dt,
-                "fire_safe_yn" : fire_safe_yn,
-                "fire_safe_dt" : fire_safe_dt,
-                "elect_ck_yn" : elect_ck_yn,
-                "elect_ck_dt" : elect_ck_dt,
-            },
-            "plyg" : {
-                "plyg_ck_yn" : plyg_ck_yn,
-                "plyg_ck_dt" : plyg_ck_dt,
-                "plyg_ck_rs_cd" : plyg_ck_rs_cd,
-            },
-            "cctv" : {
-                "cctv_ist_yn" : cctv_ist_yn,
-                "cctv_ist_total" : cctv_ist_total,
-                "cctv_ist_in" : cctv_ist_in,
-                "cctv_ist_out" : cctv_ist_out,
-            },
+            "gas_ck_yn" : gas_ck_yn,
+            "gas_ck_dt" : gas_ck_dt,
+            "fire_safe_yn" : fire_safe_yn,
+            "fire_safe_dt" : fire_safe_dt,
+            "elect_ck_yn" : elect_ck_yn,
+            "elect_ck_dt" : elect_ck_dt,
+            "plyg_ck_yn" : plyg_ck_yn,
+            "plyg_ck_dt" : plyg_ck_dt,
+            "plyg_ck_rs_cd" : plyg_ck_rs_cd,
+            "cctv_ist_yn" : cctv_ist_yn,
+            "cctv_ist_total" : cctv_ist_total,
+            "cctv_ist_in" : cctv_ist_in,
+            "cctv_ist_out" : cctv_ist_out,
             "pbntTmng" : pbntTmng
 
         }
@@ -472,7 +450,8 @@ for one in data: # sidosgg.json 추출
         codesame = next((item for item in kinder_list if item['kindercode'] == kindercode ), None)
         index = next((index for (index, item) in enumerate(kinder_list) if item['kindercode'] == kindercode), None)
         kinder_list.pop(index)
-        codesame = { **codesame, **safety_dict } 
+        # codesame = { **codesame, **safety_dict }
+        codesame['safety'] = safety_dict 
         kinder_list.append(codesame)
 
 
@@ -506,7 +485,8 @@ for one in data: # sidosgg.json 추출
         codesame = next((item for item in kinder_list if item['kindercode'] == kindercode ), None)
         index = next((index for (index, item) in enumerate(kinder_list) if item['kindercode'] == kindercode), None)
         kinder_list.pop(index)
-        codesame = { **codesame, **deduc_dict } 
+        # codesame = { **codesame, **deduc_dict }
+        codesame['deductionSociety'] = deduc_dict  
         kinder_list.append(codesame)
         
 
@@ -533,20 +513,17 @@ for one in data: # sidosgg.json 추출
             "kindername_insur" : kindername_insur,
             "insurance_nm" : insurance_nm,
             "insurance_em" : insurance_en,
-            "insurance_yn" : insurance_yn,
-            
-            "company" : {
-                "company1" : company1,
-                "company2" : company2,
-                "company3" : company3
-            }
-            
+            "insurance_yn" : insurance_yn,        
+            "company1" : company1,
+            "company2" : company2,
+            "company3" : company3
         }
 
         codesame = next((item for item in kinder_list if item['kindercode'] == kindercode ), None)
         index = next((index for (index, item) in enumerate(kinder_list) if item['kindercode'] == kindercode), None)
         kinder_list.pop(index)
-        codesame = { **codesame, **insur_dict } 
+        # codesame = { **codesame, **insur_dict } 
+        codesame['insurance'] = insur_dict
         kinder_list.append(codesame)
        
     
@@ -560,5 +537,5 @@ for one in data: # sidosgg.json 추출
 
     # list 개수 만큼 db에 추가
     # list 초기화
-    db.kinderapi.insert_many(kinder_list)
+    db.kinderapi_field10.insert_many(kinder_list)
     kinder_list.clear()
