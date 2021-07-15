@@ -3,11 +3,18 @@ import scrapy
 from selenium import webdriver
 import time
 import pymongo
+from pymongo.operations import UpdateOne
 
 ## git push test
 
-path = 'C:/Users/LG/Desktop/scrapy_prac/pagescrapy/chromedriver.exe'
-driver = webdriver.Chrome(path)
+path = 'C:/Users/LG/Desktop/child_field/kindergarten/chromedriver.exe'
+# driver = webdriver.Chrome(path)
+options = webdriver.ChromeOptions()
+options.add_argument('headless')
+options.add_argument('window-size=1920x1080')
+options.add_argument("disable-gpu")
+options.add_experimental_option("excludeSwitches", ["enable-logging"])
+driver = webdriver.Chrome(path, options=options)
 
 from pymongo import MongoClient
 client = MongoClient('localhost', 27017)
@@ -31,12 +38,10 @@ class KindSpider(scrapy.Spider):
     def parse_childpage(self, response):
         last_page = response.css('#resultArea > div.footer > div.paging > a.last::attr(href)').get()
         last_page = last_page.split("=")[1]
-        # print("\n\n======lastpage==========")
-        # print(int(last_page))
-        # print("========================")
         
-        for i in range(int(last_page), 0, -1): # (lstpg, 0, -1)
-        # for i in range(1, 5):
+        # 어린이집은 맨 마지막페이지부터 
+        # for i in range(int(last_page), 0, -1): # (lstpg, 0, -1)
+        for i in range(int(last_page), int(last_page)-1, -1):
             page_url = 'https://e-childschoolinfo.moe.go.kr/kinderMt/combineFind.do?pageIndex={}&pageCnt=50'.format(i) ##pageCnt=50으로 바꾸기
             # 개발자 도구에서 network 창 headers에 들어가면 파라미터를 통해서 페이지를 보일 수 있는 정보를 조절할 수 있다.
             yield scrapy.Request(url = page_url, callback = self.parse_allchild, meta={'page_kinder':page_url})
@@ -56,8 +61,10 @@ class KindSpider(scrapy.Spider):
         # 페이지에서 유치원/어린이집 리스트 개수 
         kinder_list = driver.find_elements_by_css_selector("#resultArea > div.lists > ul > li")
         
-        # for i in range(1, 3):
-        for i in range(1, len(kinder_list)+1):   
+        
+        bulk_list = []
+        for i in range(1, 5):
+        # for i in range(1, len(kinder_list)+1):   
             baby_or_kinder = driver.find_element_by_css_selector("#resultArea > div.lists > ul > li:nth-child({}) > div.info > span".format(i)).text
             # print("\n\n"+baby_or_kinder+"\n\n")
             if(baby_or_kinder == "유"):
@@ -218,35 +225,12 @@ class KindSpider(scrapy.Spider):
 
                     cost_dict[detail] = pay_info
 
-                """
-                # 테스트용 print문
-                print("========================")
-                print("기타필요경비")
-                for key, val in cost_dict.items():
-                    print(key, val)
-                print("\n\n나이별 비용")
-                print(cost_0, cost_1, cost_2, cost_3, cost_4, cost_5)
-                print(kinder_name, kinder_chief, kinder_esta, kinder_admin, kinder_opertime) 
-                print(kinder_call, kinder_addr, kinder_homep, teacher_num, kinder_totnum, kinder_currnum)
-                print(kinder_0cls, kinder_0totnum, kinder_0currnum)
-                print(kinder_1cls, kinder_1totnum, kinder_1currnum)
-                print(kinder_2cls, kinder_2totnum, kinder_2currnum)
-                print(kinder_3cls, kinder_3totnum, kinder_3currnum)
-                print(kinder_4cls, kinder_4totnum, kinder_4currnum)
-                print(kinder_5cls, kinder_5totnum, kinder_5currnum)
-                print(kinder_mix1, kinder_mix1_totnum, kinder_mix1_currnum)
-                print(kinder_mix2, kinder_mix2_totnum, kinder_mix2_currnum)
-                print(kinder_spcls, kinder_sp_totnum, kinder_sp_currnum)
-                print(kinder_after, kinder_aft_totnum, kinder_aft_currnum)
-                print(kinder_etccls, kinder_etc_totnum, kinder_etc_currnum)
-                print("========================")
-                """
                 
                 # 원래창으로 돌아옴
                 driver.close()
                 driver.switch_to.window(driver.window_handles[0])
 
-            
+
 
                 ## 유치원이름, 원장명, 설립유형, 관할 행정기관 ,전화번호, 홈페이지, 주소, 운영시간, 교사수, 총정원, 현인원, 학급별(학급수, 총정원, 현인원)
                 # 비용회계 추가 (사이트 월단위 업데이트)
@@ -276,11 +260,16 @@ class KindSpider(scrapy.Spider):
                     'kinder_etc_cost' : cost_dict ## 기타 경비                 
                 }
 
-                
-                db.kindergarden.insert_one(kinder_doc) # local
-                cost_dict.clear()
-                # db.kinder(kinder_doc)
+                bulk_list.append(UpdateOne({"kinder_name": kinder_name, 
+                                            "kinder_admin" : kinder_admin}, {'$set' : kinder_doc}, upsert=True ))
 
+                
+                # db.kindergarden.insert_one(kinder_doc) # local
+                # cost_dict.clear()
+                # db.kinder(kinder_doc)
+        
+        db.eorini_update.bulk_write(bulk_list)
+        cost_dict.clear()
     
     
     

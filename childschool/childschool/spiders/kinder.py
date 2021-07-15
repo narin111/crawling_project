@@ -9,20 +9,16 @@ from pymongo import MongoClient
 client = MongoClient('localhost', 27017)
 db = client.dbchildshcoolsite # local
 
-# path = 'C:/Users/LG/Desktop/현장실습/chromedriver.exe'
-path = 'D:/Desktop/crawling_project/childschool/chromedriver.exe'
+path = 'C:/Users/LG/Desktop/현장실습/chromedriver.exe'
+# path = 'D:/Desktop/crawling_project/childschool/chromedriver.exe'
 
 options = webdriver.ChromeOptions()
 options.add_argument('headless')
 options.add_argument('window-size=1920x1080')
 options.add_argument("disable-gpu")
-
 options.add_experimental_option("excludeSwitches", ["enable-logging"])
-
-
-
 driver = webdriver.Chrome(path, options=options)
-# driver = webdriver.Chrome(path)
+
 
 # connection = pymongo.MongoClient("")
 # db = connection.kinder_test
@@ -65,7 +61,7 @@ class KinderSpider(scrapy.Spider):
         bulk_list = []
 
         # for i in range(1, len(kinder_listnum) +1 ):
-        for i in range(1, 2 ):
+        for i in range(1, 5):
             
             driver.get(response.meta['page_kinder'])
             
@@ -367,14 +363,8 @@ class KinderSpider(scrapy.Spider):
 
                 ## 새 데이터 수집
 
-                ## 이전 데이터 비교
-                ## 현재 수집한 유치원이름, 관할행정기관으로 이전데이터 검색 ( 변하지 않을만한 값 )
-                ## 해당 유치원 반환
-                samekinder = {}
-                samekinder = db.kinder_update.find({
-                    "kindername" : kinder_name,
-                    "kinder_admin" : kinder_admin,
-                })
+
+
 
                 ## https://www.mongodbtutorial.org/mongodb-crud/mongodb-updatemany/ 참고하기
                 
@@ -386,7 +376,9 @@ class KinderSpider(scrapy.Spider):
                 # bulk_list.append(InsertOne(kinder_doc))
 
                 # upsert 사용하기 
-                # bulk_list.append(UpdateOne({:}, {'$set'}, upsert=True}))
+                # 같은 이름 유치원 구별하기위해 kinder_admin도 추가
+                bulk_list.append(UpdateOne({"kinder_name": kinder_name, 
+                                            "kinder_admin" : kinder_admin}, {'$set' : kinder_doc}, upsert=True ))
                 
                 
                 
