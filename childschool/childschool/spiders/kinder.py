@@ -63,7 +63,8 @@ class KinderSpider(scrapy.Spider):
         # db 효율적
         bulk_list = []
 
-        for i in range(1, len(kinder_listnum) +1 ):
+        # for i in range(1, len(kinder_listnum) +1 ):
+        for i in range(1, 2 ):
             
             driver.get(response.meta['page_kinder'])
             
@@ -87,7 +88,6 @@ class KinderSpider(scrapy.Spider):
                 kinder_admin = driver.find_element_by_css_selector("#summaryBox > div > div.col.info > div.cont.base > ul > li:nth-child(7) > span").text  
                 
 
-                    
                 # 학급/교육 네비게이션 클릭
                 kinder_class = driver.find_element_by_css_selector("#tabGroup > ul > li:nth-child(3) > a")
                 kinder_class.click()
@@ -121,6 +121,7 @@ class KinderSpider(scrapy.Spider):
                     elif(index == 8):
                         kin_sp_class = value.text 
 
+                # 합치기
                 rows_totnum = tbody.find_elements_by_tag_name("tr")[1]
                 body = rows_totnum.find_elements_by_tag_name("td")
                 for index, value in enumerate(body):
@@ -165,11 +166,13 @@ class KinderSpider(scrapy.Spider):
                 # 비용, 회계 탭
                 kinder_cost = driver.find_element_by_css_selector("#tabGroup > ul > li:nth-child(4) > a")
                 kinder_cost.click()
+                test = driver.find_element_by_css_selector("#subPage > div > div:nth-child(10) > h4").text
+                print(test)
                 
                 ### 교육과정 교육비용
-                curriculum = driver.find_element_by_css_selector("#subPage > div > div:nth-child(11) > table")
-                tbody = curriculum.find_element_by_tag_name("tbody")
-                cost_rows = tbody.find_elements_by_tag_name("tr")
+                # curriculum = driver.find_element_by_css_selector("#subPage > div > div:nth-child(11) > table")
+                # tbody = curriculum.find_element_by_tag_name("tbody")
+                
 
                 # 기본경비 - 기본교육
                 basic_age3 = {}; basic_age4 = {}; basic_age5 = {}
@@ -178,6 +181,10 @@ class KinderSpider(scrapy.Spider):
 
                 detail_flag = 0
                 option_index = 0
+
+                curri_table = driver.find_element_by_css_selector("#subPage > div > div:nth-child(11) > table")
+                tbody = curri_table.find_element_by_css_selector("#subPage > div > div:nth-child(11) > table > tbody")
+                cost_rows = tbody.find_elements_by_tag_name("tr")
                 for index, value in enumerate(cost_rows):
                     if(detail_flag == 0):
                         if(index==0):
@@ -223,8 +230,9 @@ class KinderSpider(scrapy.Spider):
                         option_index += 1
                 
                 # 방과후 과정 교육비용
-                aft_curriculum = driver.find_element_by_css_selector("#subPage > div > div:nth-child(14) > table")
-                tbody = aft_curriculum.find_element_by_tag_name("tbody")
+                # aft_curriculum = driver.find_element_by_css_selector("#subPage > div > div:nth-child(14) > table")
+                # tbody = aft_curriculum.find_element_by_tag_name("tbody")
+                tbody = driver.find_element_by_css_selector("#subPage > div > div:nth-child(14) > table > tbody")
                 cost_rows = tbody.find_elements_by_tag_name("tr")
 
                 # 기본경비 - 방과후
@@ -305,7 +313,9 @@ class KinderSpider(scrapy.Spider):
                         "comp2" : comp2,
                         "comp3" : comp3
                     }
-                    insur_total[insur_detail] = insur_doc
+                    # err : key must be string
+                    insur_key = str(insur_detail)
+                    insur_total[insur_key] = insur_doc
 
 
 
@@ -318,7 +328,7 @@ class KinderSpider(scrapy.Spider):
                     "kinder_current_num" : kin_currnum,
                     "kinder_teacher_num" : teachernum,
                     "kinder_service" : kinder_service,
-                    "kinder_age3" : {
+                    "kinder_age3" : {   
                         "class" : kin3_class,
                         "total_num" : kin3_totnum,
                         "current_num" : kin3_currnum,
@@ -350,10 +360,12 @@ class KinderSpider(scrapy.Spider):
                     "kinder_mix_age45" : { "class" : kin45_class, "total_num" : kin45_totnum, "current_num" : kin45_currnum},
                     "kinder_mix_age35" : { "class" : kin35_class, "total_num" : kin35_totnum, "current_num" : kin35_currnum},
                     "kinder_special" : { "class" : kin_sp_class, "total_num" : kin_sp_totnum, "current_num" : kin_sp_currnum},
+
+                    # "kinder_insurance" : insur_total,
                     
                     "updated" : 1
                     
-                    # "kinder_insurance" : insur_total
+                    
 
 
                 }

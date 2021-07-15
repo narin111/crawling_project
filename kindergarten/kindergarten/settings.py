@@ -19,7 +19,6 @@ HTTPERROR_ALLOWED_CODES  =[404]
 
 LOG_FILE='log/{}_kinder.txt'.format(datetime.datetime.now().strftime('%Y-%m-%d'))
 LOG_LEVEL = 'DEBUG'
-LOG_LEVEL = 'ERROR'
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'kindergarten (+http://www.yourdomain.com)'
