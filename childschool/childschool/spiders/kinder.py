@@ -8,16 +8,20 @@ from pymongo import MongoClient
 client = MongoClient('localhost', 27017)
 db = client.dbchildshcoolsite # local
 
-path = 'C:/Users/LG/Desktop/현장실습/chromedriver.exe'
-# path = 'D:/Desktop/crawling_project/childschool/chromedriver.exe'
+# path = 'C:/Users/LG/Desktop/현장실습/chromedriver.exe'
+path = 'D:/Desktop/crawling_project/childschool/chromedriver.exe'
 
 options = webdriver.ChromeOptions()
 options.add_argument('headless')
 options.add_argument('window-size=1920x1080')
 options.add_argument("disable-gpu")
 
-# driver = webdriver.Chrome(path, chrome_options=options)
-driver = webdriver.Chrome(path)
+options.add_experimental_option("excludeSwitches", ["enable-logging"])
+
+
+
+driver = webdriver.Chrome(path, options=options)
+# driver = webdriver.Chrome(path)
 
 # connection = pymongo.MongoClient("")
 # db = connection.kinder_test
@@ -29,7 +33,7 @@ class KinderSpider(scrapy.Spider):
 
     def start_requests(self):
         # pageCnt = 50
-        yield scrapy.Request(url="https://e-childschoolinfo.moe.go.kr/kinderMt/combineFind.do?&pageCnt=50", callback=self.parse_allkinder)
+        yield scrapy.Request(url="https://e-childschoolinfo.moe.go.kr/kinderMt/combineFind.do?&pageCnt=10", callback=self.parse_allkinder)
 
 
     def parse_allkinder(self, response):
@@ -41,8 +45,8 @@ class KinderSpider(scrapy.Spider):
 
         
         # for i in range(1, int(last_page)+1):
-        for i in range(1, 3):
-            page_url = 'https://e-childschoolinfo.moe.go.kr/kinderMt/combineFind.do?pageIndex={}&pageCnt=50'.format(i)
+        for i in range(1, 2):
+            page_url = 'https://e-childschoolinfo.moe.go.kr/kinderMt/combineFind.do?pageIndex={}&pageCnt=10'.format(i)
             yield scrapy.Request(url = page_url, callback = self.parse_pagekinder, meta={'page_kinder':page_url})
             
 
@@ -67,20 +71,20 @@ class KinderSpider(scrapy.Spider):
             baby_or_kinder = driver.find_element_by_css_selector("#resultArea > div.lists > ul > li:nth-child({}) > div.info > span".format(i)).text
             ## 어린이집일 때는 크롤링x
             if(baby_or_kinder == "어"):
-                print("어린이집")
+                
                 break 
             
             ## 유치원 크롤링
             elif(baby_or_kinder == "유"):
-                print("유치원")      
+                     
                 # 유치원/어린이집 클릭
                 kinder_service = driver.find_element_by_css_selector("#resultArea > div.lists > ul > li:nth-child({}) > div.info > i".format(i)).text
                 kinder_one = driver.find_element_by_css_selector("#resultArea > div.lists > ul > li:nth-child({}) > div.info > h5 > a".format(i))
                 kinder_one.click()
                 
 
-                kinder_admin = driver.find_element_by_css_selector("#summaryBox > div > div.col.info > div.cont.base > ul > li:nth-child(7) > span").text
-
+                # 관할행정기관
+                kinder_admin = driver.find_element_by_css_selector("#summaryBox > div > div.col.info > div.cont.base > ul > li:nth-child(7) > span").text  
                 
 
                     
@@ -134,7 +138,7 @@ class KinderSpider(scrapy.Spider):
                         kin35_totnum = value.text
                     elif(index == 6):
                         kin_sp_totnum = value.text
-                        print("특수학급"+value.text+"\n\n") 
+                         
 
 
                 rows_currnum = tbody.find_elements_by_tag_name("tr")[1]
@@ -197,7 +201,8 @@ class KinderSpider(scrapy.Spider):
                             continue
                             # print("detail_flag ==" + detail_flag)
                     
-                    
+                    # 선택경비의 첫번째 detail 항목은 th[1]
+                    # 다음 항목부터는 th[0]
                     elif(detail_flag == 1):
                         if(option_index == 0):
                             detail = value.find_elements_by_tag_name("th")[1]
@@ -344,15 +349,17 @@ class KinderSpider(scrapy.Spider):
                     "kinder_mix_age34" : { "class" : kin34_class, "total_num" : kin34_totnum, "current_num" : kin34_currnum},
                     "kinder_mix_age45" : { "class" : kin45_class, "total_num" : kin45_totnum, "current_num" : kin45_currnum},
                     "kinder_mix_age35" : { "class" : kin35_class, "total_num" : kin35_totnum, "current_num" : kin35_currnum},
-                    "kinder_special" : { "class" : kin_sp_class, "total_num" : kin_sp_totnum, "current_num" : kin_sp_currnum}
+                    "kinder_special" : { "class" : kin_sp_class, "total_num" : kin_sp_totnum, "current_num" : kin_sp_currnum},
+                    
+                    "updated" : 1
                     
                     # "kinder_insurance" : insur_total
 
 
                 }
-                print("\n")
+                
                 print(kinder_name)
-                print("\n")
+                
                 # list 만들어서 저장후 bulkwrite하기
                 # db.kindergarden_test.insert_one(kinder_doc) # local
                 bulk_list.append(InsertOne(kinder_doc))
@@ -370,7 +377,6 @@ class KinderSpider(scrapy.Spider):
             aftoption_age3.clear()
             aftoption_age4.clear()
             aftoption_age5.clear()
-            # safety_check.clear()
-            # kinder_bus.clear()
-        
+            
         db.kinder_bulktest.bulk_write(bulk_list)
+        # db.kinder.bulktest.bulk_write(bulk_list)

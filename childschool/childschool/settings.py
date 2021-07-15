@@ -12,7 +12,17 @@ BOT_NAME = 'childschool'
 SPIDER_MODULES = ['childschool.spiders']
 NEWSPIDER_MODULE = 'childschool.spiders'
 
+
+import datetime
+
+
 HTTPERROR_ALLOWED_CODES  =[404]
+
+LOG_FILE='log/{}_kinder.txt'.format(datetime.datetime.now().strftime('%Y-%m-%d'))
+# LOG_FILE=('log/kinder.txt')
+LOG_LEVEL = 'DEBUG'
+# LOG_LEVEL = 'ERROR'
+# LOG_FORMAT = '%(levelname)s: %(message)s'
 
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
@@ -20,6 +30,7 @@ HTTPERROR_ALLOWED_CODES  =[404]
 
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = True
+
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
 #CONCURRENT_REQUESTS = 32
