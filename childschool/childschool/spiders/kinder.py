@@ -375,6 +375,8 @@ class KinderSpider(scrapy.Spider):
                     "kindername" : kinder_name,
                     "kinder_admin" : kinder_admin,
                 })
+
+                ## https://www.mongodbtutorial.org/mongodb-crud/mongodb-updatemany/ 참고하기
                 
                 print(kinder_name)
                 
