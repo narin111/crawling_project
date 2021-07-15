@@ -166,8 +166,7 @@ class KinderSpider(scrapy.Spider):
                 # 비용, 회계 탭
                 kinder_cost = driver.find_element_by_css_selector("#tabGroup > ul > li:nth-child(4) > a")
                 kinder_cost.click()
-                test = driver.find_element_by_css_selector("#subPage > div > div:nth-child(10) > h4").text
-                print(test)
+                
                 
                 ### 교육과정 교육비용
                 # curriculum = driver.find_element_by_css_selector("#subPage > div > div:nth-child(11) > table")
@@ -182,8 +181,7 @@ class KinderSpider(scrapy.Spider):
                 detail_flag = 0
                 option_index = 0
 
-                curri_table = driver.find_element_by_css_selector("#subPage > div > div:nth-child(11) > table")
-                tbody = curri_table.find_element_by_css_selector("#subPage > div > div:nth-child(11) > table > tbody")
+                tbody = driver.find_element_by_css_selector("#subPage > div > div:nth-child(11) > table > tbody")
                 cost_rows = tbody.find_elements_by_tag_name("tr")
                 for index, value in enumerate(cost_rows):
                     if(detail_flag == 0):
@@ -206,7 +204,7 @@ class KinderSpider(scrapy.Spider):
                         if(detail_text == "합계(월)"):
                             detail_flag = 1
                             continue
-                            # print("detail_flag ==" + detail_flag)
+                            
                     
                     # 선택경비의 첫번째 detail 항목은 th[1]
                     # 다음 항목부터는 th[0]
@@ -230,8 +228,6 @@ class KinderSpider(scrapy.Spider):
                         option_index += 1
                 
                 # 방과후 과정 교육비용
-                # aft_curriculum = driver.find_element_by_css_selector("#subPage > div > div:nth-child(14) > table")
-                # tbody = aft_curriculum.find_element_by_tag_name("tbody")
                 tbody = driver.find_element_by_css_selector("#subPage > div > div:nth-child(14) > table > tbody")
                 cost_rows = tbody.find_elements_by_tag_name("tr")
 
@@ -317,7 +313,7 @@ class KinderSpider(scrapy.Spider):
                     insur_key = str(insur_detail)
                     insur_total[insur_key] = insur_doc
 
-
+            
 
             
                 # 유치원 이름, 관할행정기관, 유치원 총정원수/현원수, 교직원 수, 제공서비스, 학급별 인원수, 학급별 비용, 혼합반
@@ -377,18 +373,19 @@ class KinderSpider(scrapy.Spider):
                 bulk_list.append(InsertOne(kinder_doc))
                 # db.kinder.insert_one(kinder_doc) # epic_testdb
 
-            basic_age3.clear()
-            basic_age4.clear()
-            basic_age5.clear()
-            option_age3.clear()
-            option_age4.clear()
-            option_age5.clear()
-            aftbasic_age3.clear()
-            aftbasic_age4.clear()
-            aftbasic_age5.clear()
-            aftoption_age3.clear()
-            aftoption_age4.clear()
-            aftoption_age5.clear()
+            
             
         db.kinder_bulktest.bulk_write(bulk_list)
+        basic_age3.clear()
+        basic_age4.clear()
+        basic_age5.clear()
+        option_age3.clear()
+        option_age4.clear()
+        option_age5.clear()
+        aftbasic_age3.clear()
+        aftbasic_age4.clear()
+        aftbasic_age5.clear()
+        aftoption_age3.clear()
+        aftoption_age4.clear()
+        aftoption_age5.clear()
         # db.kinder.bulktest.bulk_write(bulk_list)

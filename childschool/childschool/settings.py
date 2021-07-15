@@ -20,8 +20,8 @@ HTTPERROR_ALLOWED_CODES  =[404]
 
 LOG_FILE='log/{}_kinder.txt'.format(datetime.datetime.now().strftime('%Y-%m-%d'))
 # LOG_FILE=('log/kinder.txt')
-LOG_LEVEL = 'DEBUG'
-# LOG_LEVEL = 'ERROR'
+# LOG_LEVEL = 'DEBUG'
+LOG_LEVEL = 'INFO'
 # LOG_FORMAT = '%(levelname)s: %(message)s'
 
 
