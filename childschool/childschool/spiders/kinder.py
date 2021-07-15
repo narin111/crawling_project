@@ -1,3 +1,4 @@
+from pymongo.operations import UpdateOne
 import scrapy
 from selenium import webdriver
 import pymongo
@@ -33,7 +34,7 @@ class KinderSpider(scrapy.Spider):
 
     def start_requests(self):
         # pageCnt = 50
-        yield scrapy.Request(url="https://e-childschoolinfo.moe.go.kr/kinderMt/combineFind.do?&pageCnt=10", callback=self.parse_allkinder)
+        yield scrapy.Request(url="https://e-childschoolinfo.moe.go.kr/kinderMt/combineFind.do?&pageCnt=50", callback=self.parse_allkinder)
 
 
     def parse_allkinder(self, response):
@@ -46,7 +47,7 @@ class KinderSpider(scrapy.Spider):
         
         # for i in range(1, int(last_page)+1):
         for i in range(1, 2):
-            page_url = 'https://e-childschoolinfo.moe.go.kr/kinderMt/combineFind.do?pageIndex={}&pageCnt=10'.format(i)
+            page_url = 'https://e-childschoolinfo.moe.go.kr/kinderMt/combineFind.do?pageIndex={}&pageCnt=50'.format(i)
             yield scrapy.Request(url = page_url, callback = self.parse_pagekinder, meta={'page_kinder':page_url})
             
 
@@ -361,31 +362,42 @@ class KinderSpider(scrapy.Spider):
                     
                     "updated" : 1
                     
-                    
-
 
                 }
+
+                ## 새 데이터 수집
+
+                ## 이전 데이터 비교
+                ## 현재 수집한 유치원이름, 관할행정기관으로 이전데이터 검색 ( 변하지 않을만한 값 )
+                ## 해당 유치원 반환
+                samekinder = {}
+                samekinder = db.kinder_update.find({
+                    "kindername" : kinder_name,
+                    "kinder_admin" : kinder_admin,
+                })
                 
                 print(kinder_name)
                 
                 # list 만들어서 저장후 bulkwrite하기
                 # db.kindergarden_test.insert_one(kinder_doc) # local
-                bulk_list.append(InsertOne(kinder_doc))
+                # insert
+                # bulk_list.append(InsertOne(kinder_doc))
+
+                # upsert 사용하기 
+                # bulk_list.append(UpdateOne({:}, {'$set'}, upsert=True}))
+                
+                
+                
                 # db.kinder.insert_one(kinder_doc) # epic_testdb
 
             
             
-        db.kinder_bulktest.bulk_write(bulk_list)
-        basic_age3.clear()
-        basic_age4.clear()
-        basic_age5.clear()
-        option_age3.clear()
-        option_age4.clear()
-        option_age5.clear()
-        aftbasic_age3.clear()
-        aftbasic_age4.clear()
-        aftbasic_age5.clear()
-        aftoption_age3.clear()
-        aftoption_age4.clear()
-        aftoption_age5.clear()
+        db.kinder_update.bulk_write(bulk_list)
+        
+        
+        basic_age3.clear(); basic_age4.clear(); basic_age5.clear()
+        option_age3.clear(); option_age4.clear(); option_age5.clear()
+        aftbasic_age3.clear(); aftbasic_age4.clear(); aftbasic_age5.clear()
+        aftoption_age3.clear(); aftoption_age4.clear(); aftoption_age5.clear()
+
         # db.kinder.bulktest.bulk_write(bulk_list)
