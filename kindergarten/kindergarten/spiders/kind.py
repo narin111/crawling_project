@@ -189,7 +189,7 @@ class KindSpider(scrapy.Spider):
                         kinder_etc_currnum = value.text     
                     
 
-                # 총교직원 수(영유야 및 교직원 탭)
+                # 총교직원 수(영유아 및 교직원 탭)
                 teacher_num = driver.find_element_by_css_selector("#popWrap2 > div > div > div > table:nth-child(6) > tbody > tr > td:nth-child(1)").text
                 
                 ## 교육 보육과정 탭 이동

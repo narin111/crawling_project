@@ -554,8 +554,7 @@ for one in data: # sidosgg.json 추출
         
 
 
-    # list 개수 만큼 db에 추가
-    # list 초기화
+
     # db.kinderapi_update.insert_many(kinder_list)
     db.kinderapi_update.bulk_write(bulk_list)
     kinder_list.clear()
