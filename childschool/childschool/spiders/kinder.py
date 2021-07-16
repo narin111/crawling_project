@@ -81,6 +81,19 @@ class KinderSpider(scrapy.Spider):
             
             ## 유치원 크롤링
             elif(baby_or_kinder == "유"):
+                
+                """
+                폐원여부 : 폐원 있을 때 태그 구조 달라짐 => 예외처리
+                """
+                try:
+                    kinder_closed = driver.find_element_by_css_selector("#resultArea > div.lists > ul > li:nth-child({}) > div.info > h5 > span.est.closed".format(i)).text
+                    print(kinder_closed)
+                    if(kinder_closed == "폐원"):
+                        continue
+                except:
+                    kinder_closed = "-"
+                    print(kinder_closed)
+                    
                      
                 # 유치원/어린이집 클릭
                 kinder_service = driver.find_element_by_css_selector("#resultArea > div.lists > ul > li:nth-child({}) > div.info > i".format(i)).text
@@ -356,13 +369,15 @@ class KinderSpider(scrapy.Spider):
                     "kinder_mix_age35" : { "class" : kin35_class, "total_num" : kin35_totnum, "current_num" : kin35_currnum},
                     "kinder_special" : { "class" : kin_sp_class, "total_num" : kin_sp_totnum, "current_num" : kin_sp_currnum},
                     # "kinder_insurance" : insur_total,
+
+                    # "kinder_closed" : kinder_closed,
                     
                     
                     "kinderall" : 1 ,
                     "updated" : 1
                     
 
-                }
+                } 
 
 
                 ## https://www.mongodbtutorial.org/mongodb-crud/mongodb-updatemany/ 참고하기
@@ -382,6 +397,8 @@ class KinderSpider(scrapy.Spider):
             
             
         db.kinder_update.bulk_write(bulk_list)
+        
+        # db.kinder_update.delete_many({ 'kinder_closed' : "폐원" })
         
         
         basic_age3.clear(); basic_age4.clear(); basic_age5.clear()

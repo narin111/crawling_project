@@ -5,6 +5,16 @@
 
 from scrapy import signals
 
+
+
+###
+from pymongo import MongoClient
+client = MongoClient('localhost', 27017)
+db = client.dbkinderapi # local
+###
+
+
+
 # useful for handling different item types with a single interface
 from itemadapter import is_item, ItemAdapter
 
@@ -54,6 +64,15 @@ class ChildschoolSpiderMiddleware:
 
     def spider_opened(self, spider):
         spider.logger.info('Spider opened: %s' % spider.name)
+    
+
+
+    ######
+    # def spider_closed(self, spider):
+    #     print("spider closed")
+    #     db.kinder_update.delete_many({"updated" : 0 })
+    ######
+
 
 
 class ChildschoolDownloaderMiddleware:
