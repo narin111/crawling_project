@@ -5,6 +5,11 @@ import pymongo
 import time
 from pymongo import InsertOne 
 
+#### spider quit and functioncall
+# from scrapy import signals
+# from scrapy.xlib.pydispatch import dispatcher
+####
+
 from pymongo import MongoClient
 client = MongoClient('localhost', 27017)
 db = client.dbchildshcoolsite # local
@@ -27,10 +32,20 @@ driver = webdriver.Chrome(path, options=options)
 
 class KinderSpider(scrapy.Spider):
     name = 'kinder'
-
+    
+    ############## spider quit functioncall
+    # def __init__(self):
+    #     dispatcher.connect(self.spider_closed, signals.spider_closed)
+    
+    # def spider_closed(self, spider):
+    #     print("spider closed")
+    #     db.kinder_update.delete_many({ "updated" : 0 })
+    ###############
+    
+    
     def start_requests(self):
         # pageCnt = 50
-        yield scrapy.Request(url="https://e-childschoolinfo.moe.go.kr/kinderMt/combineFind.do?&pageCnt=50", callback=self.parse_allkinder)
+        yield scrapy.Request(url="https://e-childschoolinfo.moe.go.kr/kinderMt/combineFind.do?&pageCnt=10", callback=self.parse_allkinder)
 
 
     def parse_allkinder(self, response):
@@ -49,8 +64,8 @@ class KinderSpider(scrapy.Spider):
 
         
         # for i in range(1, int(last_page)+1):
-        for i in range(1, 3):
-            page_url = 'https://e-childschoolinfo.moe.go.kr/kinderMt/combineFind.do?pageIndex={}&pageCnt=50'.format(i)
+        for i in range(1, 8):
+            page_url = 'https://e-childschoolinfo.moe.go.kr/kinderMt/combineFind.do?pageIndex={}&pageCnt=10'.format(i)
             yield scrapy.Request(url = page_url, callback = self.parse_pagekinder, meta={'page_kinder':page_url})
         
 
@@ -93,7 +108,7 @@ class KinderSpider(scrapy.Spider):
                 except:
                     kinder_closed = "-"
                     print(kinder_closed)
-                    
+
                      
                 # 유치원/어린이집 클릭
                 kinder_service = driver.find_element_by_css_selector("#resultArea > div.lists > ul > li:nth-child({}) > div.info > i".format(i)).text
@@ -361,7 +376,7 @@ class KinderSpider(scrapy.Spider):
                         "basic_cost" : basic_age5,
                         "option_cost" : option_age5,
                         "after_basic_cost" : aftbasic_age5,
-                        "after_option_cost" :aftoption_age5
+                        "after_option_cost" : aftoption_age5
                     },
                     
                     "kinder_mix_age34" : { "class" : kin34_class, "total_num" : kin34_totnum, "current_num" : kin34_currnum},
