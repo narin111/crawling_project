@@ -34,6 +34,8 @@ class KinderSpider(scrapy.Spider):
 
 
     def parse_allkinder(self, response):
+
+        ## db checkfield = 0 으로 초기화
        
         # 마지막 페이지 번호 검사
         last_page = response.css('#resultArea > div.footer > div.paging > a.last::attr(href)').get()
