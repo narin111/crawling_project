@@ -1,4 +1,4 @@
-from pymongo.operations import UpdateOne
+from pymongo.operations import UpdateOne, UpdateMany
 import scrapy
 from selenium import webdriver
 import pymongo
@@ -9,8 +9,8 @@ from pymongo import MongoClient
 client = MongoClient('localhost', 27017)
 db = client.dbchildshcoolsite # local
 
-path = 'C:/Users/LG/Desktop/현장실습/chromedriver.exe'
-# path = 'D:/Desktop/crawling_project/childschool/chromedriver.exe'
+# path = 'C:/Users/LG/Desktop/현장실습/chromedriver.exe'
+path = 'D:/Desktop/crawling_project/childschool/chromedriver.exe'
 
 options = webdriver.ChromeOptions()
 options.add_argument('headless')
@@ -35,7 +35,12 @@ class KinderSpider(scrapy.Spider):
 
     def parse_allkinder(self, response):
 
-        ## db checkfield = 0 으로 초기화
+        ## db의 모든 doc updated = 0 으로 초기화
+        db.kinder_update.update_many(
+            { "kinderall" : 1 },
+            { '$set' : { "updated" : 0 }}
+        )
+
        
         # 마지막 페이지 번호 검사
         last_page = response.css('#resultArea > div.footer > div.paging > a.last::attr(href)').get()
@@ -44,10 +49,10 @@ class KinderSpider(scrapy.Spider):
 
         
         # for i in range(1, int(last_page)+1):
-        for i in range(1, 2):
+        for i in range(1, 3):
             page_url = 'https://e-childschoolinfo.moe.go.kr/kinderMt/combineFind.do?pageIndex={}&pageCnt=50'.format(i)
             yield scrapy.Request(url = page_url, callback = self.parse_pagekinder, meta={'page_kinder':page_url})
-            
+        
 
     # 페이지별 유치원 크롤링
     def parse_pagekinder(self, response):
@@ -63,7 +68,7 @@ class KinderSpider(scrapy.Spider):
         bulk_list = []
 
         # for i in range(1, len(kinder_listnum) +1 ):
-        for i in range(1, 5):
+        for i in range(1, 4):
             
             driver.get(response.meta['page_kinder'])
             
@@ -356,6 +361,7 @@ class KinderSpider(scrapy.Spider):
                     "kinder_mix_age35" : { "class" : kin35_class, "total_num" : kin35_totnum, "current_num" : kin35_currnum},
                     "kinder_special" : { "class" : kin_sp_class, "total_num" : kin_sp_totnum, "current_num" : kin_sp_currnum},
 
+                    "kinderall" : 1 ,
                     # "kinder_insurance" : insur_total,
                     
                     "updated" : 1
@@ -363,24 +369,16 @@ class KinderSpider(scrapy.Spider):
 
                 }
 
-                ## 새 데이터 수집
-
-
-
 
                 ## https://www.mongodbtutorial.org/mongodb-crud/mongodb-updatemany/ 참고하기
                 
                 print(kinder_name)
                 
-                # list 만들어서 저장후 bulkwrite하기
-                # db.kindergarden_test.insert_one(kinder_doc) # local
-                # insert
-                # bulk_list.append(InsertOne(kinder_doc))
 
                 # upsert 사용하기 
-                # 같은 이름 유치원 구별하기위해 kinder_admin도 추가
+                # 같은 이름 유치원인 경우를 구별하기위해 kinder_admin도 추가
                 bulk_list.append(UpdateOne({"kinder_name": kinder_name, 
-                                            "kinder_admin" : kinder_admin}, {'$set' : kinder_doc}, upsert=True ))
+                                            "kinder_admin" : kinder_admin}, {'$set' : kinder_doc }, upsert=True ))
                 
                 
                 
