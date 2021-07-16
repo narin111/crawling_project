@@ -7,7 +7,8 @@ from pymongo.operations import UpdateOne
 
 ## git push test
 
-path = 'C:/Users/LG/Desktop/child_field/kindergarten/chromedriver.exe'
+# path = 'C:/Users/LG/Desktop/child_field/kindergarten/chromedriver.exe'
+path = 'D:/Desktop/crawling_project/childschool/chromedriver.exe'
 # driver = webdriver.Chrome(path)
 options = webdriver.ChromeOptions()
 options.add_argument('headless')
@@ -32,14 +33,20 @@ class KindSpider(scrapy.Spider):
     def start_requests(self):
         # pageCnt = 50 or 10
         yield scrapy.Request(url="https://e-childschoolinfo.moe.go.kr/kinderMt/combineFind.do?pageCnt=50", callback=self.parse_childpage)
-        # return super().start_requests()
-
+       
 
     def parse_childpage(self, response):
+
+        ## 크롤링 시작 전 db의 모든 doc updated = 0 으로 초기화
+        db.eorini_upmany.update_many(
+            { 'kinderall' : 1 },
+            { '$set' : { 'updated' : 0 }}
+        )
+
         last_page = response.css('#resultArea > div.footer > div.paging > a.last::attr(href)').get()
         last_page = last_page.split("=")[1]
         
-        # 어린이집은 맨 마지막페이지부터 
+        
         # for i in range(int(last_page), 0, -1): # (lstpg, 0, -1)
         for i in range(int(last_page), int(last_page)-1, -1):
             page_url = 'https://e-childschoolinfo.moe.go.kr/kinderMt/combineFind.do?pageIndex={}&pageCnt=50'.format(i) ##pageCnt=50으로 바꾸기
@@ -47,13 +54,13 @@ class KindSpider(scrapy.Spider):
             yield scrapy.Request(url = page_url, callback = self.parse_allchild, meta={'page_kinder':page_url})
 
 
-    # 어린이집 정보 가져오기
+    
     def parse_allchild(self, response):
        
 
         driver.get(response.meta['page_kinder']) 
        
-        # 어린이집 선택 => 어린이집 테스트
+        # 어린이집 선택 => 어린이집 테스트 ==> 지워보기
         baby = driver.find_element_by_css_selector("#filterArea > div.tabs > ul > li.tapMenu3 > a")
         baby.click()
 
@@ -63,7 +70,7 @@ class KindSpider(scrapy.Spider):
         
         
         bulk_list = []
-        for i in range(1, 5):
+        for i in range(1, 3):
         # for i in range(1, len(kinder_list)+1):   
             baby_or_kinder = driver.find_element_by_css_selector("#resultArea > div.lists > ul > li:nth-child({}) > div.info > span".format(i)).text
             # print("\n\n"+baby_or_kinder+"\n\n")
@@ -71,8 +78,7 @@ class KindSpider(scrapy.Spider):
                 ## 함수이동
                 print("\n\n유치원")
             elif(baby_or_kinder == "어"):
-                print("\n\n어린이집") 
-
+               
                 kinder_one = driver.find_element_by_css_selector("#resultArea > div.lists > ul > li:nth-child({}) > div.info > h5 > a".format(i))
                 kinder_one.click()
 
@@ -182,6 +188,7 @@ class KindSpider(scrapy.Spider):
                     elif(index == 11):
                         kinder_etc_currnum = value.text     
                     
+
                 # 총교직원 수(영유야 및 교직원 탭)
                 teacher_num = driver.find_element_by_css_selector("#popWrap2 > div > div > div > table:nth-child(6) > tbody > tr > td:nth-child(1)").text
                 
@@ -231,7 +238,7 @@ class KindSpider(scrapy.Spider):
                 driver.switch_to.window(driver.window_handles[0])
 
 
-
+                print(kinder_name)
                 ## 유치원이름, 원장명, 설립유형, 관할 행정기관 ,전화번호, 홈페이지, 주소, 운영시간, 교사수, 총정원, 현인원, 학급별(학급수, 총정원, 현인원)
                 # 비용회계 추가 (사이트 월단위 업데이트)
                 kinder_doc = {
@@ -257,9 +264,13 @@ class KindSpider(scrapy.Spider):
                     'kinder_special': {'class' : kinder_spcls, 'total_num' : kinder_sp_totnum, 'current_num' : kinder_sp_currnum},
                     'kinder_after' : {'class' : kinder_after, 'total_num' : kinder_aft_totnum, 'current_num' : kinder_aft_currnum},
                     'kinder_etc' : {'class' : kinder_etccls, 'total_num' : kinder_etc_totnum, 'current_num' : kinder_etc_currnum},
-                    'kinder_etc_cost' : cost_dict ## 기타 경비                 
+                    'kinder_etc_cost' : cost_dict, ## 기타 경비
+                    
+                    'kinderall' : 1,
+                    'updated' : 1                 
                 }
 
+                # updateone 하면 collection은 명시적으로 지정x??
                 bulk_list.append(UpdateOne({"kinder_name": kinder_name, 
                                             "kinder_admin" : kinder_admin}, {'$set' : kinder_doc}, upsert=True ))
 
@@ -268,7 +279,7 @@ class KindSpider(scrapy.Spider):
                 # cost_dict.clear()
                 # db.kinder(kinder_doc)
         
-        db.eorini_update.bulk_write(bulk_list)
+        db.eorini_upmany.bulk_write(bulk_list)
         cost_dict.clear()
     
     

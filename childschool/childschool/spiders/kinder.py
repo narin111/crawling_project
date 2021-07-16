@@ -171,12 +171,7 @@ class KinderSpider(scrapy.Spider):
                 kinder_cost = driver.find_element_by_css_selector("#tabGroup > ul > li:nth-child(4) > a")
                 kinder_cost.click()
                 
-                
-                ### 교육과정 교육비용
-                # curriculum = driver.find_element_by_css_selector("#subPage > div > div:nth-child(11) > table")
-                # tbody = curriculum.find_element_by_tag_name("tbody")
-                
-
+            
                 # 기본경비 - 기본교육
                 basic_age3 = {}; basic_age4 = {}; basic_age5 = {}
                 # 선택경비 - 기본교육
@@ -360,10 +355,10 @@ class KinderSpider(scrapy.Spider):
                     "kinder_mix_age45" : { "class" : kin45_class, "total_num" : kin45_totnum, "current_num" : kin45_currnum},
                     "kinder_mix_age35" : { "class" : kin35_class, "total_num" : kin35_totnum, "current_num" : kin35_currnum},
                     "kinder_special" : { "class" : kin_sp_class, "total_num" : kin_sp_totnum, "current_num" : kin_sp_currnum},
-
-                    "kinderall" : 1 ,
                     # "kinder_insurance" : insur_total,
                     
+                    
+                    "kinderall" : 1 ,
                     "updated" : 1
                     
 

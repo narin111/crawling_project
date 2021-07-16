@@ -5,6 +5,7 @@ from urllib.parse import urlencode, unquote, quote_plus
 import urllib.request
 import requests
 import time
+from pymongo.operations import UpdateMany, UpdateOne
 
 from pymongo import MongoClient
 client = MongoClient('localhost', 27017)
@@ -37,6 +38,14 @@ insur = "https://e-childschoolinfo.moe.go.kr/api/notice/insurance.do"
 
 apikey = "2039b8c5db3c4385b39b00ae74b783cc"
 
+
+bulk_list = []
+
+## 크롤링 전 update여부 초기화 
+db.kinderapi_update.update_many(
+            { 'kinderall' : 1 },
+            { '$set' : { 'updated' : 0 }}
+        )   
 for one in data: # sidosgg.json 추출
     time.sleep(0.5)
     sidoCode = one['시도코드']
@@ -97,7 +106,10 @@ for one in data: # sidosgg.json 추출
             "clcnt5" : clcnt5,
             "mixppcnt" : mixppcnt,
             "shppcnt" : shppcnt,
-            "pbnTtmng" : pbnTtmng
+            "pbnTtmng" : pbnTtmng,
+
+            "kinderall" : 1,
+            "updated" : 1,
         }
 
        
@@ -156,16 +168,12 @@ for one in data: # sidosgg.json 추출
         }
 
         # 딕셔너리 list에서 kindercode가 같은 딕셔너리와 딕셔너리 합치기
-        # 가장 먼저 검색되는 dict 반환
-        # kinder_list에서 kinderCode가 같은 유치원 검색
+       
         codesame = next((item for item in kinder_list if item['kindercode'] == kindercode ), None)
-
-        # kinder dict list에서 인덱스찾아 지우기
         index = next((index for (index, item) in enumerate(kinder_list) if item['kindercode'] == kindercode), None)
         kinder_list.pop(index)
     
         # kinderCode가 같은 dictionary끼리 합쳐 list append
-        # codesame = { **codesame, **teach_dict } 
         codesame['teachersInfo'] = teach_dict
         kinder_list.append(codesame)
 
@@ -526,18 +534,33 @@ for one in data: # sidosgg.json 추출
         kinder_list.pop(index)
         # codesame = { **codesame, **insur_dict } 
         codesame['insurance'] = insur_dict
-        kinder_list.append(codesame)
-       
-    
+        kinder_list.append(codesame) ## 중복데이터 생김......
 
-    
-    print("딕셔너리 합침")
-    for i in range(len(kinder_list)):
-        print(kinder_list[i])
-    
+
+
+        
+        """
+        kinder_list 돌면서 유치원 documnet 하나씩 update one
+        listname[i]['key값'] = value
+        수집한 데이터의 유치원이름과 db에 저장된 유치원 이름 비교 -> upsert
+        """
+        for i in range(len(kinder_list)):
+            # print(kinder_list[i]['kindercode'])
+            one_name = kinder_list[i]['kindername']
+            one_code = kinder_list[i]['kindercode']
+            bulk_list.append(UpdateOne({"kindername" : one_name,
+                                        "kindercode": one_code}, 
+                                        {'$set' : kinder_list[i] }, upsert=True ))
+        
 
 
     # list 개수 만큼 db에 추가
     # list 초기화
-    db.kinderapi_field10.insert_many(kinder_list)
+    # db.kinderapi_update.insert_many(kinder_list)
+    db.kinderapi_update.bulk_write(bulk_list)
     kinder_list.clear()
+    bulk_list.clear()
+
+
+# 기존 데이터가 API상에서 삭제된 경우 (updated = 0)
+db.kinderapi_update.delete_many({ 'updated' : 0 })
