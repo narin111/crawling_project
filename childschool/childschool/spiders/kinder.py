@@ -8,6 +8,7 @@ from pymongo import InsertOne
 #### spider quit and functioncall
 # from scrapy import signals
 # from scrapy.xlib.pydispatch import dispatcher
+# 최신 버전의 scrapy scrapy.xlib.pydispatch에서는 더 이상 사용되지 않습니다. 대신 사용할 수 있습니다from pydispatch import dispatcher
 ####
 
 from pymongo import MongoClient
