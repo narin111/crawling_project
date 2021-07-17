@@ -6,8 +6,9 @@ import time
 from pymongo import InsertOne 
 
 #### spider quit and functioncall
-# from scrapy import signals
+from scrapy import signals
 # from scrapy.xlib.pydispatch import dispatcher
+from pydispatch import dispatcher
 # 최신 버전의 scrapy scrapy.xlib.pydispatch에서는 더 이상 사용되지 않습니다. 대신 사용할 수 있습니다from pydispatch import dispatcher
 ####
 
@@ -15,8 +16,8 @@ from pymongo import MongoClient
 client = MongoClient('localhost', 27017)
 db = client.dbchildshcoolsite # local
 
-# path = 'C:/Users/LG/Desktop/현장실습/chromedriver.exe'
-path = 'D:/Desktop/crawling_project/childschool/chromedriver.exe'
+path = 'C:/Users/LG/Desktop/현장실습/chromedriver.exe'
+# path = 'D:/Desktop/crawling_project/childschool/chromedriver.exe'
 
 options = webdriver.ChromeOptions()
 options.add_argument('headless')
@@ -35,12 +36,12 @@ class KinderSpider(scrapy.Spider):
     name = 'kinder'
     
     ############## spider quit functioncall
-    # def __init__(self):
-    #     dispatcher.connect(self.spider_closed, signals.spider_closed)
+    def __init__(self):
+        dispatcher.connect(self.spider_closed, signals.spider_closed)
     
-    # def spider_closed(self, spider):
-    #     print("spider closed")
-    #     db.kinder_update.delete_many({ "updated" : 0 })
+    def spider_closed(self, spider):
+        print("spider closed")
+        db.kinder_update.delete_many({ "updated" : 0 })
     ###############
     
     
@@ -65,7 +66,7 @@ class KinderSpider(scrapy.Spider):
 
         
         # for i in range(1, int(last_page)+1):
-        for i in range(1, 8):
+        for i in range(1, 3):
             page_url = 'https://e-childschoolinfo.moe.go.kr/kinderMt/combineFind.do?pageIndex={}&pageCnt=10'.format(i)
             yield scrapy.Request(url = page_url, callback = self.parse_pagekinder, meta={'page_kinder':page_url})
         
@@ -77,8 +78,8 @@ class KinderSpider(scrapy.Spider):
         driver.get(response.meta['page_kinder'])
         time.sleep(0.5)
         kinder_listnum = driver.find_elements_by_css_selector("#resultArea > div.lists > ul > li")
-        print("&&&&&&&")
-        print(response.meta['page_kinder'])
+        # print("&&&&&&&")
+        # print(response.meta['page_kinder'])
 
         # db 효율적
         bulk_list = []
