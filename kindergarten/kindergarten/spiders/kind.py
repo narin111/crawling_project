@@ -5,10 +5,14 @@ import time
 import pymongo
 from pymongo.operations import UpdateOne
 
+from scrapy import signals
+# from scrapy.xlib.pydispatch import dispatcher
+from pydispatch import dispatcher
+
 ## git push test
 
-# path = 'C:/Users/LG/Desktop/child_field/kindergarten/chromedriver.exe'
-path = 'D:/Desktop/crawling_project/childschool/chromedriver.exe'
+path = 'C:/Users/LG/Desktop/child_field/kindergarten/chromedriver.exe'
+# path = 'D:/Desktop/crawling_project/childschool/chromedriver.exe'
 # driver = webdriver.Chrome(path)
 options = webdriver.ChromeOptions()
 options.add_argument('headless')
@@ -29,6 +33,15 @@ db = client.dbkindergarden # local
 #### 어린이집
 class KindSpider(scrapy.Spider):
     name = 'kind'
+
+    ############## spider quit functioncall
+    def __init__(self):
+        dispatcher.connect(self.spider_closed, signals.spider_closed)
+    
+    def spider_closed(self, spider):
+        print("spider closed")
+        db.eorini_upmany.delete_many({ "updated" : 0 })
+    ###############
 
     def start_requests(self):
         # pageCnt = 50 or 10
