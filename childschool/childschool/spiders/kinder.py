@@ -314,7 +314,7 @@ class KinderSpider(scrapy.Spider):
                 safety_btn.click()
 
                 
-
+                """
                 # 보험별 가입현황
                 insur_total = {}
 
@@ -339,6 +339,9 @@ class KinderSpider(scrapy.Spider):
                     # err : key must be string
                     insur_key = str(insur_detail)
                     insur_total[insur_key] = insur_doc
+
+                """
+                
 
             
 
@@ -383,11 +386,8 @@ class KinderSpider(scrapy.Spider):
                     "kinder_mix_age45" : { "class" : kin45_class, "total_num" : kin45_totnum, "current_num" : kin45_currnum},
                     "kinder_mix_age35" : { "class" : kin35_class, "total_num" : kin35_totnum, "current_num" : kin35_currnum},
                     "kinder_special" : { "class" : kin_sp_class, "total_num" : kin_sp_totnum, "current_num" : kin_sp_currnum},
-                    # "kinder_insurance" : insur_total,
-
-                    # "kinder_closed" : kinder_closed,
-                    
-                    
+                   
+                   
                     "kinderall" : 1 ,
                     "updated" : 1
                     
