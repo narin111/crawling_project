@@ -86,7 +86,6 @@ class KinderSpider(scrapy.Spider):
         # for i in range(1, 4):
             
             driver.get(response.meta['page_kinder'])
-            print(response.meta['page_kinder'])
             
             ####
             baby_or_kinder = driver.find_element_by_css_selector("#resultArea > div.lists > ul > li:nth-child({}) > div.info > span".format(i)).text
@@ -309,7 +308,7 @@ class KinderSpider(scrapy.Spider):
                         
                         option_index += 1
                 
-                
+                """
                 # 보건, 안전 탭
                 kinder_safe = driver.find_element_by_css_selector("#tabGroup > ul > li:nth-child(5) > a")
                 kinder_safe.click()
@@ -317,6 +316,8 @@ class KinderSpider(scrapy.Spider):
                 # 안전교육 , 안전점검 버튼 클릭 
                 safety_btn = driver.find_element_by_css_selector("#tabMenus > ul > li:nth-child(2) > a")
                 safety_btn.click()
+                """
+               
 
                 
 
