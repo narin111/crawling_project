@@ -10,8 +10,8 @@ from scrapy import signals
 from pydispatch import dispatcher
 
 
-path = 'C:/Users/LG/Desktop/child_field/kindergarten/chromedriver.exe'
-# path = 'D:/Desktop/crawling_project/childschool/chromedriver.exe'
+# path = 'C:/Users/LG/Desktop/child_field/kindergarten/chromedriver.exe'
+path = 'D:/Desktop/crawling_project/childschool/chromedriver.exe'
 
 options = webdriver.ChromeOptions()
 options.add_argument('headless')
@@ -87,7 +87,7 @@ class KindSpider(scrapy.Spider):
             # print("\n\n"+baby_or_kinder+"\n\n")
             if(baby_or_kinder == "유"):
                 ## 함수이동
-                print("\n\n유치원")
+                print("유")
             elif(baby_or_kinder == "어"):
                
                 kinder_one = driver.find_element_by_css_selector("#resultArea > div.lists > ul > li:nth-child({}) > div.info > h5 > a".format(i))
@@ -290,7 +290,7 @@ class KindSpider(scrapy.Spider):
                 # cost_dict.clear()
                 # db.kinder(kinder_doc)
         
-        db.eorini_upmany.bulk_write(bulk_list)
+        db.eorini_test.bulk_write(bulk_list)
         cost_dict.clear()
     
     

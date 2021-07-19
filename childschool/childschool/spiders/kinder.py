@@ -63,8 +63,8 @@ class KinderSpider(scrapy.Spider):
         print(int(last_page))
 
         
-        for i in range(1, int(last_page)+1):
-        # for i in range(1, 3):
+        # for i in range(1, int(last_page)+1):
+        for i in range(1, 5):
             page_url = 'https://e-childschoolinfo.moe.go.kr/kinderMt/combineFind.do?pageIndex={}&pageCnt=50'.format(i)
             yield scrapy.Request(url = page_url, callback = self.parse_pagekinder, meta={'page_kinder':page_url})
         
@@ -86,6 +86,7 @@ class KinderSpider(scrapy.Spider):
         # for i in range(1, 4):
             
             driver.get(response.meta['page_kinder'])
+            print(response.meta['page_kinder'])
             
             ####
             baby_or_kinder = driver.find_element_by_css_selector("#resultArea > div.lists > ul > li:nth-child({}) > div.info > span".format(i)).text
@@ -102,13 +103,17 @@ class KinderSpider(scrapy.Spider):
                 """
                 try:
                     kinder_closed = driver.find_element_by_css_selector("#resultArea > div.lists > ul > li:nth-child({}) > div.info > h5 > span.est.closed".format(i)).text
-                    print(kinder_closed)
                     if(kinder_closed == "폐원"):
                         continue
                 except:
                     kinder_closed = "-"
-                    print(kinder_closed)
 
+                try:
+                    kinder_closed = driver.find_element_by_css_selector("#resultArea > div.lists > ul > li:nth-child({}) > div.info > h5 > span.est.rested".format(i)).text
+                    if(kinder_closed == "휴원"):
+                        continue
+                except:
+                    kinder_closed = "-"
                      
                 # 유치원/어린이집 클릭
                 kinder_service = driver.find_element_by_css_selector("#resultArea > div.lists > ul > li:nth-child({}) > div.info > i".format(i)).text
@@ -314,36 +319,6 @@ class KinderSpider(scrapy.Spider):
                 safety_btn.click()
 
                 
-                """
-                # 보험별 가입현황
-                insur_total = {}
-
-                per_table = driver.find_element_by_css_selector("#idPrint > div:nth-child(17) > table")
-                insur_tbody = per_table.find_element_by_tag_name("tbody")
-                cost_rows = insur_tbody.find_elements_by_tag_name("tr")
-                for index, value in enumerate(cost_rows):
-                    insur_detail = value.find_elements_by_tag_name("td")[0]
-                    target = value.find_elements_by_tag_name("td")[1]
-                    join = value.find_elements_by_tag_name("td")[2]
-                    comp1 = value.find_elements_by_tag_name("td")[3]
-                    comp2 = value.find_elements_by_tag_name("td")[4]
-                    comp3 = value.find_elements_by_tag_name("td")[5]
-
-                    insur_doc={
-                        "target" : target,
-                        "join" : join,
-                        "comp1" : comp1,
-                        "comp2" : comp2,
-                        "comp3" : comp3
-                    }
-                    # err : key must be string
-                    insur_key = str(insur_detail)
-                    insur_total[insur_key] = insur_doc
-
-                """
-                
-
-            
 
             
                 # 유치원 이름, 관할행정기관, 유치원 총정원수/현원수, 교직원 수, 제공서비스, 학급별 인원수, 학급별 비용, 혼합반
@@ -406,8 +381,6 @@ class KinderSpider(scrapy.Spider):
                 
                 
 
-            
-            
         db.kinder_test.bulk_write(bulk_list)
 
         # db.kinder.bulk_write(bulk_list) # epic_testdb
