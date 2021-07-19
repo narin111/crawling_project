@@ -16,8 +16,8 @@ from pymongo import MongoClient
 client = MongoClient('localhost', 27017)
 db = client.dbchildshcoolsite # local
 
-path = 'C:/Users/LG/Desktop/현장실습/chromedriver.exe'
-# path = 'D:/Desktop/crawling_project/childschool/chromedriver.exe'
+# path = 'C:/Users/LG/Desktop/현장실습/chromedriver.exe'
+path = 'D:/Desktop/crawling_project/childschool/chromedriver.exe'
 
 options = webdriver.ChromeOptions()
 options.add_argument('headless')
@@ -47,7 +47,7 @@ class KinderSpider(scrapy.Spider):
     
     def start_requests(self):
         # pageCnt = 50
-        yield scrapy.Request(url="https://e-childschoolinfo.moe.go.kr/kinderMt/combineFind.do?&pageCnt=10", callback=self.parse_allkinder)
+        yield scrapy.Request(url="https://e-childschoolinfo.moe.go.kr/kinderMt/combineFind.do?&pageCnt=50", callback=self.parse_allkinder)
 
 
     def parse_allkinder(self, response):
@@ -65,9 +65,9 @@ class KinderSpider(scrapy.Spider):
         print(int(last_page))
 
         
-        # for i in range(1, int(last_page)+1):
-        for i in range(1, 3):
-            page_url = 'https://e-childschoolinfo.moe.go.kr/kinderMt/combineFind.do?pageIndex={}&pageCnt=10'.format(i)
+        for i in range(1, int(last_page)+1):
+        # for i in range(1, 3):
+            page_url = 'https://e-childschoolinfo.moe.go.kr/kinderMt/combineFind.do?pageIndex={}&pageCnt=50'.format(i)
             yield scrapy.Request(url = page_url, callback = self.parse_pagekinder, meta={'page_kinder':page_url})
         
 
@@ -84,8 +84,8 @@ class KinderSpider(scrapy.Spider):
         # db 효율적
         bulk_list = []
 
-        # for i in range(1, len(kinder_listnum) +1 ):
-        for i in range(1, 4):
+        for i in range(1, len(kinder_listnum) +1 ):
+        # for i in range(1, 4):
             
             driver.get(response.meta['page_kinder'])
             

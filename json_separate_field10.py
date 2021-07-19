@@ -505,6 +505,8 @@ for one in data: # sidosgg.json 추출
     res = req.readline()
     j = json.loads(res)
     jarray = j.get("kinderInfo")
+    kinder_i=0
+    post_kindername="-"
     for list in jarray:
         kindername_insur = list.get("kindername")
         officeedu = list.get("officeedu") # 교육청명
@@ -532,11 +534,22 @@ for one in data: # sidosgg.json 추출
         codesame = next((item for item in kinder_list if item['kindercode'] == kindercode ), None)
         index = next((index for (index, item) in enumerate(kinder_list) if item['kindercode'] == kindercode), None)
         kinder_list.pop(index)
-        # codesame = { **codesame, **insur_dict } 
-        codesame['insurance'] = insur_dict
-        kinder_list.append(codesame) ## 중복데이터 생김......
+        # codesame = { **codesame, **insur_dict }
+        # codesame['insurance'] = insur_dict
 
+        
 
+        if(post_kindername == kindername_insur):
+            kinder_i+=1
+            codesame['insurance'+str(kinder_i)] = insur_dict
+            kinder_list.append(codesame)
+        
+        elif(post_kindername != kindername_insur ):
+            kinder_i = 1
+            codesame['insurance'+str(kinder_i)] = insur_dict
+            kinder_list.append(codesame)
+
+        post_kindername = kindername_insur
 
         
         """
@@ -544,18 +557,22 @@ for one in data: # sidosgg.json 추출
         listname[i]['key값'] = value
         수집한 데이터의 유치원이름과 db에 저장된 유치원 이름 비교 -> upsert
         """
+
+
+        
         for i in range(len(kinder_list)):
+            print(kinder_list[i])
             # print(kinder_list[i]['kindercode'])
             one_name = kinder_list[i]['kindername']
             one_code = kinder_list[i]['kindercode']
             bulk_list.append(UpdateOne({"kindername" : one_name,
                                         "kindercode": one_code}, 
                                         {'$set' : kinder_list[i] }, upsert=True ))
+            
+            
         
-
-
-
-    # db.kinderapi_update.insert_many(kinder_list)
+    
+    # 유치원 코드와 같은 collection으로
     db.kinderapi_update.bulk_write(bulk_list)
     kinder_list.clear()
     bulk_list.clear()

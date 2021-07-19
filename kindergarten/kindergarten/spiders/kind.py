@@ -60,8 +60,8 @@ class KindSpider(scrapy.Spider):
         last_page = last_page.split("=")[1]
         
         
-        # for i in range(int(last_page), 0, -1): # (lstpg, 0, -1)
-        for i in range(int(last_page), int(last_page)-1, -1):
+        for i in range(int(last_page), 0, -1): # (lstpg, 0, -1)
+        # for i in range(int(last_page), int(last_page)-1, -1):
             page_url = 'https://e-childschoolinfo.moe.go.kr/kinderMt/combineFind.do?pageIndex={}&pageCnt=50'.format(i) ##pageCnt=50으로 바꾸기
             # 개발자 도구에서 network 창 headers에 들어가면 파라미터를 통해서 페이지를 보일 수 있는 정보를 조절할 수 있다.
             yield scrapy.Request(url = page_url, callback = self.parse_allchild, meta={'page_kinder':page_url})
@@ -83,8 +83,8 @@ class KindSpider(scrapy.Spider):
         
         
         bulk_list = []
-        for i in range(1, 3):
-        # for i in range(1, len(kinder_list)+1):   
+        # for i in range(1, 3):
+        for i in range(1, len(kinder_list)+1):   
             baby_or_kinder = driver.find_element_by_css_selector("#resultArea > div.lists > ul > li:nth-child({}) > div.info > span".format(i)).text
             # print("\n\n"+baby_or_kinder+"\n\n")
             if(baby_or_kinder == "유"):
@@ -283,7 +283,7 @@ class KindSpider(scrapy.Spider):
                     'updated' : 1                 
                 }
 
-                # updateone 하면 collection은 명시적으로 지정x??
+                
                 bulk_list.append(UpdateOne({"kinder_name": kinder_name, 
                                             "kinder_admin" : kinder_admin}, {'$set' : kinder_doc}, upsert=True ))
 
