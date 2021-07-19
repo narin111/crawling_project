@@ -9,7 +9,7 @@ from pymongo.operations import UpdateMany, UpdateOne
 
 from pymongo import MongoClient
 client = MongoClient('localhost', 27017)
-db = client.dbkinderapi # local
+db = client.dbchildshcoolsite # local
 
 
 with open('sidosgg.json', encoding='UTF8') as file:
@@ -42,7 +42,7 @@ apikey = "2039b8c5db3c4385b39b00ae74b783cc"
 bulk_list = []
 
 ## 크롤링 전 update여부 초기화 
-db.kinderapi_update.update_many(
+db.kinder_test.update_many(
             { 'kinderall' : 1 },
             { '$set' : { 'updated' : 0 }}
         )   
@@ -573,10 +573,10 @@ for one in data: # sidosgg.json 추출
         
     
     # 유치원 코드와 같은 collection으로
-    db.kinderapi_update.bulk_write(bulk_list)
+    db.kinder_test.bulk_write(bulk_list)
     kinder_list.clear()
     bulk_list.clear()
 
 
 # 기존 데이터가 API상에서 삭제된 경우 (updated = 0)
-db.kinderapi_update.delete_many({ 'updated' : 0 })
+db.kinder_test.delete_many({ 'updated' : 0 })

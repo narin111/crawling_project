@@ -9,11 +9,10 @@ from scrapy import signals
 # from scrapy.xlib.pydispatch import dispatcher
 from pydispatch import dispatcher
 
-## git push test
 
 path = 'C:/Users/LG/Desktop/child_field/kindergarten/chromedriver.exe'
 # path = 'D:/Desktop/crawling_project/childschool/chromedriver.exe'
-# driver = webdriver.Chrome(path)
+
 options = webdriver.ChromeOptions()
 options.add_argument('headless')
 options.add_argument('window-size=1920x1080')
@@ -23,7 +22,7 @@ driver = webdriver.Chrome(path, options=options)
 
 from pymongo import MongoClient
 client = MongoClient('localhost', 27017)
-db = client.dbkindergarden # local
+db = client.dbchildshcoolsite # local
 
 # connection = pymongo.MongoClient("mongodb+srv://{}:{}@rbscity".format(os.getenv('ID'), os.getenv('PWD'))) example
 # connection = pymongo.MongoClient("")
@@ -34,7 +33,7 @@ db = client.dbkindergarden # local
 class KindSpider(scrapy.Spider):
     name = 'kind'
 
-    ############## spider quit functioncall
+    ##############
     def __init__(self):
         dispatcher.connect(self.spider_closed, signals.spider_closed)
     
@@ -62,8 +61,7 @@ class KindSpider(scrapy.Spider):
         
         for i in range(int(last_page), 0, -1): # (lstpg, 0, -1)
         # for i in range(int(last_page), int(last_page)-1, -1):
-            page_url = 'https://e-childschoolinfo.moe.go.kr/kinderMt/combineFind.do?pageIndex={}&pageCnt=50'.format(i) ##pageCnt=50으로 바꾸기
-            # 개발자 도구에서 network 창 headers에 들어가면 파라미터를 통해서 페이지를 보일 수 있는 정보를 조절할 수 있다.
+            page_url = 'https://e-childschoolinfo.moe.go.kr/kinderMt/combineFind.do?pageIndex={}&pageCnt=50'.format(i) 
             yield scrapy.Request(url = page_url, callback = self.parse_allchild, meta={'page_kinder':page_url})
 
 

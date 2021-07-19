@@ -7,9 +7,7 @@ from pymongo import InsertOne
 
 #### spider quit and functioncall
 from scrapy import signals
-# from scrapy.xlib.pydispatch import dispatcher
 from pydispatch import dispatcher
-# 최신 버전의 scrapy scrapy.xlib.pydispatch에서는 더 이상 사용되지 않습니다. 대신 사용할 수 있습니다from pydispatch import dispatcher
 ####
 
 from pymongo import MongoClient
@@ -41,7 +39,7 @@ class KinderSpider(scrapy.Spider):
     
     def spider_closed(self, spider):
         print("spider closed")
-        db.kinder_update.delete_many({ "updated" : 0 })
+        db.kinder_test.delete_many({ "updated" : 0 })
     ###############
     
     
@@ -53,7 +51,7 @@ class KinderSpider(scrapy.Spider):
     def parse_allkinder(self, response):
 
         ## db의 모든 doc updated = 0 으로 초기화
-        db.kinder_update.update_many(
+        db.kinder_test.update_many(
             { "kinderall" : 1 },
             { '$set' : { "updated" : 0 }}
         )
@@ -395,9 +393,6 @@ class KinderSpider(scrapy.Spider):
                     
 
                 } 
-
-
-                ## https://www.mongodbtutorial.org/mongodb-crud/mongodb-updatemany/ 참고하기
                 
                 print(kinder_name)
                 
@@ -409,14 +404,13 @@ class KinderSpider(scrapy.Spider):
                 
                 
                 
-                # db.kinder.insert_one(kinder_doc) # epic_testdb
+                
 
             
             
-        db.kinder_update.bulk_write(bulk_list)
-        
-        # db.kinder_update.delete_many({ 'kinder_closed' : "폐원" })
-        
+        db.kinder_test.bulk_write(bulk_list)
+
+        # db.kinder.bulk_write(bulk_list) # epic_testdb
         
         basic_age3.clear(); basic_age4.clear(); basic_age5.clear()
         option_age3.clear(); option_age4.clear(); option_age5.clear()
