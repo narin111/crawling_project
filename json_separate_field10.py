@@ -465,7 +465,7 @@ for one in data: # sidosgg.json 추출
         kinder_list.append(codesame)
 
 
-
+    """
     # 공제회가입현황
     req = urllib.request.urlopen(deduc+query) 
     res = req.readline()
@@ -498,7 +498,7 @@ for one in data: # sidosgg.json 추출
         # codesame = { **codesame, **deduc_dict }
         codesame['deductionSociety'] = deduc_dict  
         kinder_list.append(codesame)
-        
+    """   
 
     # 보험별 가입 현황
     req = urllib.request.urlopen(insur+query) 
@@ -550,8 +550,9 @@ for one in data: # sidosgg.json 추출
             kinder_list.append(codesame)
 
         """
+
         if(post_kindercode == kindercode):
-            kinder_i+=1
+            kinder_i += 1
             codesame['insurance'+str(kinder_i)] = insur_dict
             kinder_list.append(codesame)
         
@@ -560,17 +561,16 @@ for one in data: # sidosgg.json 추출
             codesame['insurance'+str(kinder_i)] = insur_dict
             kinder_list.append(codesame)
         
-        post_kindecode = kindercode
+        post_kindercode = kindercode
 
         
+
+
         """
         kinder_list 돌면서 유치원 documnet 하나씩 update one
         listname[i]['key값'] = value
         수집한 데이터의 유치원이름과 db에 저장된 유치원 이름 비교 -> upsert
         """
-
-
-        
         for i in range(len(kinder_list)):
             print(kinder_list[i])
             # print(kinder_list[i]['kindercode'])
@@ -579,12 +579,20 @@ for one in data: # sidosgg.json 추출
             bulk_list.append(UpdateOne({"kindername" : one_name,
                                         "kindercode": one_code}, 
                                         {'$set' : kinder_list[i] }, upsert=True ))
+
+            ## 예상: 같은 이름의 유치원에 데이터 추가(field 추가)
+            # db.kinder_test.update({ 'kindername' : kindername, 
+            #                         'kinderadmin' : officeedu},
+            #                         {'$push' : kinder_list[i]}, upsert = True)
             
             
         
     
     # 유치원 코드와 같은 collection으로
-    db.kinder_test.bulk_write(bulk_list)
+
+    # db.kinder_test.bulk_write(bulk_list)
+
+
     kinder_list.clear()
     bulk_list.clear()
 
