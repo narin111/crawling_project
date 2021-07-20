@@ -9,6 +9,8 @@ from scrapy import signals
 # from scrapy.xlib.pydispatch import dispatcher
 from pydispatch import dispatcher
 
+from selenium.common.exceptions import UnexpectedAlertPresentException
+
 
 # path = 'C:/Users/LG/Desktop/child_field/kindergarten/chromedriver.exe'
 path = 'D:/Desktop/crawling_project/childschool/chromedriver.exe'
@@ -88,11 +90,18 @@ class KindSpider(scrapy.Spider):
             if(baby_or_kinder == "유"):
                 ## 함수이동
                 print("유")
+                continue
+
             elif(baby_or_kinder == "어"):
                
-                kinder_one = driver.find_element_by_css_selector("#resultArea > div.lists > ul > li:nth-child({}) > div.info > h5 > a".format(i))
-                kinder_one.click()
-
+                try: 
+                    kinder_one = driver.find_element_by_css_selector("#resultArea > div.lists > ul > li:nth-child({}) > div.info > h5 > a".format(i))
+                    kinder_one.click()
+                except UnexpectedAlertPresentException as e:
+                    print(e)
+                    print("폐지된 시설")
+                    continue 
+                
                 # 활성탭 바꾸기
                 driver.switch_to.window(driver.window_handles[-1])
                 time.sleep(1)

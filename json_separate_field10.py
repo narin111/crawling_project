@@ -506,7 +506,7 @@ for one in data: # sidosgg.json 추출
     j = json.loads(res)
     jarray = j.get("kinderInfo")
     kinder_i=0
-    post_kindername="-"
+    post_kindercode="-"
     for list in jarray:
         kindername_insur = list.get("kindername")
         officeedu = list.get("officeedu") # 교육청명
@@ -538,7 +538,7 @@ for one in data: # sidosgg.json 추출
         # codesame['insurance'] = insur_dict
 
         
-
+        """
         if(post_kindername == kindername_insur):
             kinder_i+=1
             codesame['insurance'+str(kinder_i)] = insur_dict
@@ -549,7 +549,18 @@ for one in data: # sidosgg.json 추출
             codesame['insurance'+str(kinder_i)] = insur_dict
             kinder_list.append(codesame)
 
-        post_kindername = kindername_insur
+        """
+        if(post_kindercode == kindercode):
+            kinder_i+=1
+            codesame['insurance'+str(kinder_i)] = insur_dict
+            kinder_list.append(codesame)
+        
+        elif(post_kindercode != kindercode ):
+            kinder_i = 1
+            codesame['insurance'+str(kinder_i)] = insur_dict
+            kinder_list.append(codesame)
+        
+        post_kindecode = kindercode
 
         
         """

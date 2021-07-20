@@ -1,3 +1,4 @@
+import scrapy
 from pymongo.operations import UpdateOne, UpdateMany
 import scrapy
 from selenium import webdriver
@@ -24,15 +25,9 @@ options.add_argument("disable-gpu")
 options.add_experimental_option("excludeSwitches", ["enable-logging"])
 driver = webdriver.Chrome(path, options=options)
 
+class Kinder2Spider(scrapy.Spider):
+    name = 'kinder2'
 
-# connection = pymongo.MongoClient("")
-# db = connection.kinder_test
-
-# clone test
-
-class KinderSpider(scrapy.Spider):
-    name = 'kinder'
-    
     ############## spider quit functioncall
     def __init__(self):
         dispatcher.connect(self.spider_closed, signals.spider_closed)
@@ -56,16 +51,15 @@ class KinderSpider(scrapy.Spider):
             { '$set' : { "updated" : 0 }}
         )
 
-       
+      
         # 마지막 페이지 번호 검사
         last_page = response.css('#resultArea > div.footer > div.paging > a.last::attr(href)').get()
         last_page = last_page.split("=")[1]
         print(int(last_page))
 
         
-        
-        for i in range(1, int(last_page)+1):
-        # for i in range(1, 5):
+        # for i in range(int(last_page)/2, int(last_page)+1):
+        for i in range(1, 5):
             page_url = 'https://e-childschoolinfo.moe.go.kr/kinderMt/combineFind.do?pageIndex={}&pageCnt=50'.format(i)
             yield scrapy.Request(url = page_url, callback = self.parse_pagekinder, meta={'page_kinder':page_url})
         
@@ -83,7 +77,7 @@ class KinderSpider(scrapy.Spider):
         # db 효율적
         bulk_list = []
 
-        for i in range(1, len(kinder_listnum)/2):
+        for i in range(1, len(kinder_listnum) +1 ):
         # for i in range(1, 4):
             
             driver.get(response.meta['page_kinder'])
@@ -93,7 +87,7 @@ class KinderSpider(scrapy.Spider):
             ## 어린이집일 때는 크롤링x
             if(baby_or_kinder == "어"):
                 
-                continue
+                continue 
             
             ## 유치원 크롤링
             elif(baby_or_kinder == "유"):
@@ -393,3 +387,4 @@ class KinderSpider(scrapy.Spider):
         aftoption_age3.clear(); aftoption_age4.clear(); aftoption_age5.clear()
 
         # db.kinder.bulktest.bulk_write(bulk_list)
+
