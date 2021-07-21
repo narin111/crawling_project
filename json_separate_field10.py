@@ -465,7 +465,7 @@ for one in data: # sidosgg.json 추출
         kinder_list.append(codesame)
 
 
-    """ 
+     
     # 공제회가입현황
     req = urllib.request.urlopen(deduc+query) 
     res = req.readline()
@@ -498,7 +498,7 @@ for one in data: # sidosgg.json 추출
         # codesame = { **codesame, **deduc_dict }
         codesame['deductionSociety'] = deduc_dict  
         kinder_list.append(codesame)
-    """  
+     
 
     # 보험별 가입 현황
     req = urllib.request.urlopen(insur+query) 
@@ -567,18 +567,9 @@ for one in data: # sidosgg.json 추출
                                         "kindercode": one_code}, 
                                         {'$set' : kinder_list[i] }, upsert=True ))
 
-            # 예상: 같은 이름의 유치원에 데이터 추가(field 추가)
-            # db.kinder_test.update({ 'kindername' : kindername, 
-            #                         'kinderadmin' : officeedu},
-            #                         {'$push' : kinder_list[i]}, upsert = True)
             
             
-        """
-        Exception has occurred: WriteError
-        The field 'kindername' must be an array but is of type string in document {no id}, full error: {'index': 0, 'code': 2, 'errmsg': "The field 'kindername' must be an array but is of type string in document {no id}"}
-        File "D:\Desktop\crawling_project\json_separate_field10.py", line 584, in <module>
-        db.kinder_test.update({ 'kindername' : kindername,
-        """
+       
     
     # 유치원 코드와 같은 collection으로
 
