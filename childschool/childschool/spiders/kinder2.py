@@ -40,17 +40,18 @@ class Kinder2Spider(scrapy.Spider):
     
     def start_requests(self):
         # pageCnt = 50
+        db.kinder_test.update_many(
+            { "kinderall" : 1 },
+            { '$set' : { "updated" : 0 }}
+        )
+
         yield scrapy.Request(url="https://e-childschoolinfo.moe.go.kr/kinderMt/combineFind.do?&pageCnt=50", callback=self.parse_allkinder)
 
 
     def parse_allkinder(self, response):
 
         ## db의 모든 doc updated = 0 으로 초기화
-        db.kinder_test.update_many(
-            { "kinderall" : 1 },
-            { '$set' : { "updated" : 0 }}
-        )
-
+        
       
         # 마지막 페이지 번호 검사
         last_page = response.css('#resultArea > div.footer > div.paging > a.last::attr(href)').get()
@@ -58,12 +59,13 @@ class Kinder2Spider(scrapy.Spider):
         print(int(last_page))
 
         
+            
         # for i in range(int(last_page)/2, int(last_page)+1):
         for i in range(1, 5):
             page_url = 'https://e-childschoolinfo.moe.go.kr/kinderMt/combineFind.do?pageIndex={}&pageCnt=50'.format(i)
             yield scrapy.Request(url = page_url, callback = self.parse_pagekinder, meta={'page_kinder':page_url})
         
-
+    
     # 페이지별 유치원 크롤링
     def parse_pagekinder(self, response):
        
