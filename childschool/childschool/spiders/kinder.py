@@ -121,7 +121,9 @@ class KinderSpider(scrapy.Spider):
                 kinder_one.click()
                 
 
-                # 관할행정기관
+                # 대표자명, 원장명, 관할행정기관
+                kinder_rppnname = driver.find_element_by_css_selector("#summaryBox > div > div.col.info > div.cont.base > ul > li:nth-child(3) > span").text
+                kinder_ldgrname = driver.find_element_by_css_selector("#summaryBox > div > div.col.info > div.cont.base > ul > li:nth-child(4) > span").text
                 kinder_admin = driver.find_element_by_css_selector("#summaryBox > div > div.col.info > div.cont.base > ul > li:nth-child(7) > span").text  
                 
 
@@ -313,8 +315,11 @@ class KinderSpider(scrapy.Spider):
 
             
                 # 유치원 이름, 관할행정기관, 유치원 총정원수/현원수, 교직원 수, 제공서비스, 학급별 인원수, 학급별 비용, 혼합반
+                # 유치원 구분하기위해 원장명 추가
                 kinder_doc = {
-                    "kinder_name" : kinder_name,
+                    "kindername" : kinder_name,
+                    "rppnname" : kinder_rppnname,
+                    "ldgrname" : kinder_ldgrname,
                     "kinder_admin" : kinder_admin,
                     "kinder_total_num" : kin_totnum,
                     "kinder_current_num" : kin_currnum,

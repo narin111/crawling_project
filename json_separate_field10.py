@@ -72,7 +72,7 @@ for one in data: # sidosgg.json 추출
         subofficeedu = list.get("subofficeedu") # 교육지원청명
         kindercode = list.get("kindercode") # 유치원코드
         establish = list.get("establish") # 설립유형
-        rppname = list.get("rppnname") # 대표자명
+        rppnname = list.get("rppnname") # 대표자명
         ldgrname = list.get("ldgrname") # 원장명
         edate = list.get("edate") # 설립일
         odate = list.get("odate") # 개원일
@@ -93,7 +93,7 @@ for one in data: # sidosgg.json 추출
             "subofficeedu" : subofficeedu,
             "kindercode" : kindercode,
             "establish" : establish,
-            "rppname" : rppname,
+            "rppnname" : rppnname,
             "ldgrname" : ldgrname,
             "edate" : edate,
             "odate" : odate,
@@ -180,7 +180,6 @@ for one in data: # sidosgg.json 추출
 
 
     # 수업일수 현황
-    ## API상에서 유치원 코드 다 동일하게 되어있다.
     req = urllib.request.urlopen(teach_days+query) 
 
     res = req.readline()
@@ -465,7 +464,7 @@ for one in data: # sidosgg.json 추출
         kinder_list.append(codesame)
 
 
-     
+    
     # 공제회가입현황
     req = urllib.request.urlopen(deduc+query) 
     res = req.readline()
@@ -498,7 +497,7 @@ for one in data: # sidosgg.json 추출
         # codesame = { **codesame, **deduc_dict }
         codesame['deductionSociety'] = deduc_dict  
         kinder_list.append(codesame)
-     
+    
 
     # 보험별 가입 현황
     req = urllib.request.urlopen(insur+query) 
@@ -562,9 +561,12 @@ for one in data: # sidosgg.json 추출
             print(kinder_list[i])
             # print(kinder_list[i]['kindercode'])
             one_name = kinder_list[i]['kindername']
-            one_code = kinder_list[i]['kindercode']
+            # one_code = kinder_list[i]['kindercode']
+            one_rppn = kinder_list[i]['rppnname']
+            one_ldgr = kinder_list[i]['ldgrname']
             bulk_list.append(UpdateOne({"kindername" : one_name,
-                                        "kindercode": one_code}, 
+                                        "rppnname": one_rppn,
+                                        "ldgrname" : one_ldgr}, 
                                         {'$set' : kinder_list[i] }, upsert=True ))
 
             
