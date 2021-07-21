@@ -92,8 +92,7 @@ class KinderSpider(scrapy.Spider):
             ####
             baby_or_kinder = driver.find_element_by_css_selector("#resultArea > div.lists > ul > li:nth-child({}) > div.info > span".format(i)).text
             ## 어린이집일 때는 크롤링x
-            if(baby_or_kinder == "어"):
-                
+            if(baby_or_kinder == "어"): 
                 continue
             
             ## 유치원 크롤링
@@ -310,18 +309,7 @@ class KinderSpider(scrapy.Spider):
                         
                         option_index += 1
                 
-                """
-                # 보건, 안전 탭
-                kinder_safe = driver.find_element_by_css_selector("#tabGroup > ul > li:nth-child(5) > a")
-                kinder_safe.click()
-
-                # 안전교육 , 안전점검 버튼 클릭 
-                safety_btn = driver.find_element_by_css_selector("#tabMenus > ul > li:nth-child(2) > a")
-                safety_btn.click()
-                """
-               
-
-                
+              
 
             
                 # 유치원 이름, 관할행정기관, 유치원 총정원수/현원수, 교직원 수, 제공서비스, 학급별 인원수, 학급별 비용, 혼합반
@@ -384,13 +372,17 @@ class KinderSpider(scrapy.Spider):
                 
                 
 
-        db.kinder_test.bulk_write(bulk_list)
+        if bulk_list:
+            db.kinder_test.bulk_write(bulk_list)
 
         # db.kinder.bulk_write(bulk_list) # epic_testdb
         
+        """
         basic_age3.clear(); basic_age4.clear(); basic_age5.clear()
         option_age3.clear(); option_age4.clear(); option_age5.clear()
         aftbasic_age3.clear(); aftbasic_age4.clear(); aftbasic_age5.clear()
         aftoption_age3.clear(); aftoption_age4.clear(); aftoption_age5.clear()
+        """
+
 
         # db.kinder.bulktest.bulk_write(bulk_list)
