@@ -62,8 +62,8 @@ class KindSpider(scrapy.Spider):
         last_page = last_page.split("=")[1]
         
         
-        # for i in range(int(last_page), 0, -1): # (lstpg, 0, -1)
-        for i in range(209, 210):
+        for i in range(int(last_page), 0, -1): # (lstpg, 0, -1)
+        # for i in range(653, 656):
             page_url = 'https://e-childschoolinfo.moe.go.kr/kinderMt/combineFind.do?pageIndex={}&pageCnt=50'.format(i) 
             yield scrapy.Request(url = page_url, callback = self.parse_allchild, meta={'page_kinder':page_url})
 
@@ -88,7 +88,8 @@ class KindSpider(scrapy.Spider):
         cost_dict = {}
         bulk_list = []
         # for i in range(1, 3):
-        for i in range(1, len(kinder_list)+1):   
+        for i in range(1, len(kinder_list)+1):
+               
             baby_or_kinder = driver.find_element_by_css_selector("#resultArea > div.lists > ul > li:nth-child({}) > div.info > span".format(i)).text
             
 
@@ -105,20 +106,24 @@ class KindSpider(scrapy.Spider):
                
                 kinder_one = driver.find_element_by_css_selector("#resultArea > div.lists > ul > li:nth-child({}) > div.info > h5 > a".format(i))
                 kinder_one.click()
-                
+
+                # 활성탭 바꿈
+                driver.switch_to.window(driver.window_handles[-1])
+
+                # 바뀐 활성탭에서 alert창 처리해야함
                 # 폐원된 시설 예외처리
                 try: 
                     alert = driver.switch_to_alert()
                     print(alert.text)
                     alert.dismiss()
+                    driver.close()
+                    driver.switch_to.window(driver.window_handles[0])
                     continue
                      
 
                 except:
-                    # 운영중인 유치원
-                    # 활성탭 바꾸기
-                    driver.switch_to.window(driver.window_handles[-1])
-                    time.sleep(1)
+                    
+                    time.sleep(0.1)
 
                     
                     kinder_name = driver.find_element_by_css_selector("#CRNAMETITLE").text

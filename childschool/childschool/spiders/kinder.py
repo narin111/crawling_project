@@ -75,7 +75,7 @@ class KinderSpider(scrapy.Spider):
        
 
         driver.get(response.meta['page_kinder'])
-        time.sleep(0.5)
+        time.sleep(0.3)
         kinder_listnum = driver.find_elements_by_css_selector("#resultArea > div.lists > ul > li")
         # print("&&&&&&&")
         # print(response.meta['page_kinder'])
@@ -83,7 +83,7 @@ class KinderSpider(scrapy.Spider):
         # db 효율적
         bulk_list = []
 
-        # for i in range(1, len(kinder_listnum)/2):
+        
         for i in range(1, len(kinder_listnum)+1):
         # for i in range(1, 4):
             

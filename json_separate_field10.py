@@ -42,7 +42,7 @@ apikey = "2039b8c5db3c4385b39b00ae74b783cc"
 bulk_list = []
 
 ## 크롤링 전 update여부 초기화 
-db.kinder_test.update_many(
+db.apikinder_test.update_many(
             { 'kinderall' : 1 },
             { '$set' : { 'updated' : 0 }}
         )   
@@ -406,7 +406,7 @@ for one in data: # sidosgg.json 추출
         codesame['environmentHygiene'] = envir_dict
         kinder_list.append(codesame)
 
-
+    
     # 안전점검, 교육실시 현황
     req = urllib.request.urlopen(safety+query) 
     res = req.readline()
@@ -462,7 +462,7 @@ for one in data: # sidosgg.json 추출
         # codesame = { **codesame, **safety_dict }
         codesame['safety'] = safety_dict 
         kinder_list.append(codesame)
-
+    
 
     
     # 공제회가입현황
@@ -498,7 +498,7 @@ for one in data: # sidosgg.json 추출
         codesame['deductionSociety'] = deduc_dict  
         kinder_list.append(codesame)
     
-
+    
     # 보험별 가입 현황
     req = urllib.request.urlopen(insur+query) 
     res = req.readline()
@@ -548,7 +548,7 @@ for one in data: # sidosgg.json 추출
             kinder_list.append(codesame)
         
         post_kindercode = kindercode
-
+        
         
 
 
@@ -575,7 +575,7 @@ for one in data: # sidosgg.json 추출
     
     # 유치원 코드와 같은 collection으로
 
-    db.kinder_test.bulk_write(bulk_list)
+    db.apikinder_test.bulk_write(bulk_list)
 
 
     kinder_list.clear()
@@ -583,4 +583,4 @@ for one in data: # sidosgg.json 추출
 
 
 # 기존 데이터가 API상에서 삭제된 경우 (updated = 0)
-db.kinder_test.delete_many({ 'updated' : 0 })
+db.apikinder_test.delete_many({ 'updated' : 0 })
