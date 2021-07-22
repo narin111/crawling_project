@@ -1,6 +1,11 @@
 from unittest import TestCase
 from pymongo import MongoClient
 
+# db.collection.count()
+
+client = MongoClient('localhost', 27017)
+db = client.dbchildshcoolsite # local
+
 class Mytests(TestCase):
     def test(self):
         self.assertEqual('d', 'd')
@@ -8,6 +13,7 @@ class Mytests(TestCase):
     def test_exceptions(self):
         1/0
 
+    
 
 # import unittest
 # from mongoengine import connect, disconnect

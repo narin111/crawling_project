@@ -1,3 +1,4 @@
+from pymongo.message import update
 from pymongo.operations import UpdateOne, UpdateMany
 import scrapy
 from selenium import webdriver
@@ -22,6 +23,7 @@ options.add_argument('headless')
 options.add_argument('window-size=1920x1080')
 options.add_argument("disable-gpu")
 options.add_experimental_option("excludeSwitches", ["enable-logging"])
+options.add_argument("user-agent=Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko")
 driver = webdriver.Chrome(path, options=options)
 
 
@@ -75,6 +77,7 @@ class KinderSpider(scrapy.Spider):
        
 
         driver.get(response.meta['page_kinder'])
+        print(response.meta['page_kinder'])
         time.sleep(0.3)
         kinder_listnum = driver.find_elements_by_css_selector("#resultArea > div.lists > ul > li")
         # print("&&&&&&&")
@@ -205,6 +208,9 @@ class KinderSpider(scrapy.Spider):
                 # 비용, 회계 탭
                 kinder_cost = driver.find_element_by_css_selector("#tabGroup > ul > li:nth-child(4) > a")
                 kinder_cost.click()
+
+                update_time = driver.find_element_by_css_selector("#select-time_displayAtag").text
+                # print(update_time)
                 
             
                 # 기본경비 - 기본교육
@@ -317,6 +323,7 @@ class KinderSpider(scrapy.Spider):
                 # 유치원 이름, 관할행정기관, 유치원 총정원수/현원수, 교직원 수, 제공서비스, 학급별 인원수, 학급별 비용, 혼합반
                 # 유치원 구분하기위해 원장명 추가
                 kinder_doc = {
+                    "update_time" : update_time,
                     "kindername" : kinder_name,
                     "rppnname" : kinder_rppnname,
                     "ldgrname" : kinder_ldgrname,

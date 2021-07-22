@@ -1,5 +1,8 @@
 from selenium import webdriver
 
+
+# db.collection.count()
+
 ## 마지막페이지 검사
 def seleniumpage():
     driver = webdriver.Chrome('D:/Desktop/crawling_project/childschool/chromedriver.exe')
