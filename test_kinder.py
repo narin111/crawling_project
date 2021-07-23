@@ -6,6 +6,13 @@ from selenium.webdriver.support import expected_conditions as EC
 
 # db.collection.count()
 
+"""
+유치원 개수 db 개수 비교하는 것은 어려울 것 같다.
+-> 예외 경우가 많음 (정보입력이 안된 유치원)
+-> 어린이집은 폐원 필터링 안됨
+=> selenium으로 count??
+"""
+
 ## 마지막페이지 검사
 def seleniumpage():
     driver = webdriver.Chrome('D:/Desktop/crawling_project/childschool/chromedriver.exe')
