@@ -198,8 +198,6 @@ class KindSpider(scrapy.Spider):
                             kinder_aft_totnum = value.text
                         elif(index == 11):
                             kinder_etc_totnum = value.text
-                        
-                    
                     
                     rows_totnum = tbody.find_elements_by_tag_name("tr")[2]
                     body = rows_totnum.find_elements_by_tag_name("td")

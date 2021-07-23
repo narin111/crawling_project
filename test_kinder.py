@@ -6,47 +6,43 @@ from selenium.webdriver.support import expected_conditions as EC
 
 # db.collection.count()
 
+from pymongo import MongoClient
+client = MongoClient('localhost', 27017)
+db = client.dbchildshcoolsite # local
+
+
 """
 유치원 개수 db 개수 비교하는 것은 어려울 것 같다.
--> 예외 경우가 많음 (정보입력이 안된 유치원)
+-> 예외 경우가 많음 (정보입력이 안 된 유치원)
 -> 어린이집은 폐원 필터링 안됨
 => selenium으로 count??
 """
 
 ## 마지막페이지 검사
-def seleniumpage():
-    driver = webdriver.Chrome('D:/Desktop/crawling_project/childschool/chromedriver.exe')
-    driver.get('https://e-childschoolinfo.moe.go.kr/kinderMt/combineFind.do?pageCnt=50')
+def doc_count():
+    # driver = webdriver.Chrome('D:/Desktop/crawling_project/childschool/chromedriver.exe')
+    # driver.get('https://e-childschoolinfo.moe.go.kr/kinderMt/combineFind.do?pageCnt=50')
 
-
-    kinder_btn = driver.find_element_by_css_selector("#filterArea > div.tabs > ul > li.tapMenu2 > a")
-    kinder_btn.click()
-    time.sleep(0.5)
-    # close = driver.find_element_by_xpath("//*[@id='specseq-C-1']")
-    # close.click()
-    # rest = driver.find_element_by_xpath("//*[@id='specseq-C-2]")
-    # rest.click()
+    cnt = db.eorini_test.count_documents( { 'kinderall' : 1 })
     
-
-        
-    rest =WebDriverWait(driver, 20).until(EC.element_to_be_clickable((By.XPATH,"//*[@id='specseq-C-1']")))
-    rest.click()
-
-    close =WebDriverWait(driver, 20).until(EC.element_to_be_clickable((By.XPATH,"//*[@id='specseq-C-2']")))
-    close.click()
+    return cnt 
 
 
+def kinder_chk(kindername):
+    doc_list = db.eorini_test.find({'kindername': kindername})
+    return doc_list
+    
+def test_doc_count():
+    print(doc_count())
+    assert doc_count() == 15189
 
-    # for i in range(int(last_page), 0, -1): # (lstpg, 0, -1)
-    # # for i in range(int(last_page), int(last_page)-1, -1):
-    #     page_url = 'https://e-childschoolinfo.moe.go.kr/kinderMt/combineFind.do?pageIndex={}&pageCnt=50'.format(i) 
 
-
-    # return last_page
-
-
-def test_page():
-    assert seleniumpage() == "687" # 마지막 페이지
+def test_kinder_chk():
+    kind_list = ["힐스테이트사임당어린이집", "스카이뷰어린이집", "다온어린이집", " 에일린어린이집", "광성어린이집", "하얀돌어린이집", "풍림 어린이집"]
+    for kind in kind_list:
+        dlist = kinder_chk(kind)
+        print(dlist)
+    assert True
 
 
 

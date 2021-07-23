@@ -19,9 +19,9 @@ db = client.dbchildshcoolsite # local
 path = 'D:/Desktop/crawling_project/childschool/chromedriver.exe'
 
 options = webdriver.ChromeOptions()
-options.add_argument('headless')
-options.add_argument('window-size=1920x1080')
-options.add_argument("disable-gpu")
+# options.add_argument('headless')
+# options.add_argument('window-size=1920x1080')
+# options.add_argument("disable-gpu")
 options.add_experimental_option("excludeSwitches", ["enable-logging"])
 options.add_argument("user-agent=Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko")
 driver = webdriver.Chrome(path, options=options)
@@ -67,7 +67,7 @@ class KinderSpider(scrapy.Spider):
         
         
         # for i in range(1, int(last_page)+1):
-        for i in range(148, 149):
+        for i in range(1, 2):
             page_url = 'https://e-childschoolinfo.moe.go.kr/kinderMt/combineFind.do?pageIndex={}&pageCnt=50'.format(i)
             yield scrapy.Request(url = page_url, callback = self.parse_pagekinder, meta={'page_kinder':page_url})
         
@@ -88,9 +88,9 @@ class KinderSpider(scrapy.Spider):
 
         
         # for i in range(1, len(kinder_listnum)+1):
-        for i in range(45, 51):
+        for i in range(1, 5):
             
-            driver.get(response.meta['page_kinder']) # 유치원 들어갈 때마다 호출????
+            # driver.get(response.meta['page_kinder']) # 유치원 들어갈 때마다 호출?? => driver
             
             ####
             baby_or_kinder = driver.find_element_by_css_selector("#resultArea > div.lists > ul > li:nth-child({}) > div.info > span".format(i)).text
@@ -334,7 +334,10 @@ class KinderSpider(scrapy.Spider):
                     
                 
 
-                
+                    driver.back()
+                    driver.back()
+                    driver.back()
+                    
 
                     # 유치원 이름, 관할행정기관, 유치원 총정원수/현원수, 교직원 수, 제공서비스, 학급별 인원수, 학급별 비용, 혼합반
                     # 유치원 구분하기위해 원장명 추가
