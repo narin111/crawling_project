@@ -95,7 +95,7 @@ class KindSpider(scrapy.Spider):
 
             # 유치원일때 InvalidOperation: No operations to execute 오류
             if(baby_or_kinder == "유"):
-                print("유")
+                # print("유")
                 continue
 
             elif(baby_or_kinder == "어"):

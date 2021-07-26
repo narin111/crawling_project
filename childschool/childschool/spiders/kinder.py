@@ -67,7 +67,7 @@ class KinderSpider(scrapy.Spider):
         
         
         for i in range(1, int(last_page)+1):
-        # for i in range(1, 2):
+        # for i in range(152, 153):
             page_url = 'https://e-childschoolinfo.moe.go.kr/kinderMt/combineFind.do?pageIndex={}&pageCnt=50'.format(i)
             yield scrapy.Request(url = page_url, callback = self.parse_pagekinder, meta={'page_kinder':page_url})
         
@@ -134,7 +134,8 @@ class KinderSpider(scrapy.Spider):
                     noinfo_alert = driver.switch_to_alert()
                     print(noinfo_alert.text)
                     noinfo_alert.dismiss()
-                    driver.switch_to.window(driver.window_handles[0])
+                    # driver.switch_to.window(driver.window_handles[0])
+                    driver.back()
                     continue
                 
                 except:
