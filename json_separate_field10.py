@@ -42,6 +42,8 @@ apikey = "2039b8c5db3c4385b39b00ae74b783cc"
 
 
 bulk_list = []
+## time sleep
+timesleep = 0.5
 
 ## 크롤링 전 update여부 초기화 
 db.kinder_test.update_many(
@@ -49,7 +51,7 @@ db.kinder_test.update_many(
             { '$set' : { 'updated' : 0 }}
         )   
 for one in data: # sidosgg.json 추출
-    time.sleep(0.5)
+    time.sleep(timesleep)
     sidoCode = one['시도코드']
     sggCode = one['시군구코드']
     print("==============")
