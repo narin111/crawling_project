@@ -19,9 +19,9 @@ db = client.dbchildshcoolsite # local
 path = 'D:/Desktop/crawling_project/childschool/chromedriver.exe'
 
 options = webdriver.ChromeOptions()
-# options.add_argument('headless')
-# options.add_argument('window-size=1920x1080')
-# options.add_argument("disable-gpu")
+options.add_argument('headless')
+options.add_argument('window-size=1920x1080')
+options.add_argument("disable-gpu")
 options.add_experimental_option("excludeSwitches", ["enable-logging"])
 options.add_argument("user-agent=Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko")
 driver = webdriver.Chrome(path, options=options)
@@ -66,8 +66,8 @@ class KinderSpider(scrapy.Spider):
 
         
         
-        # for i in range(1, int(last_page)+1):
-        for i in range(1, 2):
+        for i in range(1, int(last_page)+1):
+        # for i in range(1, 2):
             page_url = 'https://e-childschoolinfo.moe.go.kr/kinderMt/combineFind.do?pageIndex={}&pageCnt=50'.format(i)
             yield scrapy.Request(url = page_url, callback = self.parse_pagekinder, meta={'page_kinder':page_url})
         
@@ -87,8 +87,8 @@ class KinderSpider(scrapy.Spider):
         bulk_list = []
 
         
-        # for i in range(1, len(kinder_listnum)+1):
-        for i in range(1, 5):
+        for i in range(1, len(kinder_listnum)+1):
+        # for i in range(1, 5):
             
             # driver.get(response.meta['page_kinder']) # 유치원 들어갈 때마다 호출?? => driver
             

@@ -9,6 +9,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from pymongo import MongoClient
 client = MongoClient('localhost', 27017)
 db = client.dbchildshcoolsite # local
+collection = db.get_collection('eorini_test')
 
 
 """
@@ -18,30 +19,37 @@ db = client.dbchildshcoolsite # local
 => selenium으로 count??
 """
 
-## 마지막페이지 검사
-def doc_count():
-    # driver = webdriver.Chrome('D:/Desktop/crawling_project/childschool/chromedriver.exe')
-    # driver.get('https://e-childschoolinfo.moe.go.kr/kinderMt/combineFind.do?pageCnt=50')
 
+def doc_count():
     cnt = db.eorini_test.count_documents( { 'kinderall' : 1 })
-    
     return cnt 
 
 
-def kinder_chk(kindername):
-    doc_list = db.eorini_test.find({'kindername': kindername})
-    return doc_list
-    
+def kinder_chk(kind):
+    result = collection.find({ 'kinder_name' :  kind })
+    print(kind)
+    for kinderdoc in result:
+        # print(i)
+        for key, val in kinderdoc.items():
+            print(key, ":", val)
+            print("\n")
+    print("\n\n")
+    # myCursor = db.eorini_test.find({ 'kindername' :  kind })
+    # print(myCursor.next())
+    # print(myCursor.next())
+    # return myCursor.next()
+
+
 def test_doc_count():
     print(doc_count())
     assert doc_count() == 15189
 
 
 def test_kinder_chk():
-    kind_list = ["힐스테이트사임당어린이집", "스카이뷰어린이집", "다온어린이집", " 에일린어린이집", "광성어린이집", "하얀돌어린이집", "풍림 어린이집"]
+    kind_list = ["힐스테이트사임당어린이집", "스카이뷰어린이집", "다온어린이집", "에일린어린이집", "광성어린이집", "하얀돌어린이집", "풍림 어린이집"]
     for kind in kind_list:
-        dlist = kinder_chk(kind)
-        print(dlist)
+        kinder_chk(kind)
+        # print(dlist)
     assert True
 
 

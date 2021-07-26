@@ -42,7 +42,7 @@ class KindSpider(scrapy.Spider):
     
     def spider_closed(self, spider):
         print("spider closed")
-        db.eorini_upmany.delete_many({ "updated" : 0 })
+        db.eorini_test_1.delete_many({ "updated" : 0 })
     ###############
 
     def start_requests(self):
@@ -53,7 +53,7 @@ class KindSpider(scrapy.Spider):
     def parse_childpage(self, response):
 
         ## 크롤링 시작 전 db의 모든 doc updated = 0 으로 초기화
-        db.eorini_upmany.update_many(
+        db.eorini_test_1.update_many(
             { 'kinderall' : 1 },
             { '$set' : { 'updated' : 0 }}
         )
@@ -318,7 +318,7 @@ class KindSpider(scrapy.Spider):
         # 리스트에 비었을 때 InvalidOperation: No operations to execute 오류
         # 리스트에 값 들어있을 때만 db write
         if bulk_list:
-            db.eorini_test.bulk_write(bulk_list)
+            db.eorini_test_1.bulk_write(bulk_list)
         
         cost_dict.clear()
     
