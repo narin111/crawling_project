@@ -30,42 +30,40 @@ driver = webdriver.Chrome(path, options=options)
 # connection = pymongo.MongoClient("")
 # db = connection.kinder_test
 
-# clone test
-
 class KinderSpider(scrapy.Spider):
     name = 'kinder'
     
-    ############## spider quit functioncall
+    ## spider가 종료되면 데이터베이스 updated: 0 인 것 삭제
     def __init__(self):
         dispatcher.connect(self.spider_closed, signals.spider_closed)
     
     def spider_closed(self, spider):
         print("spider closed")
         db.kinder_test.delete_many({ "updated" : 0 })
-    ###############
     
     
+    # spider 시작 url
     def start_requests(self):
         # pageCnt = 50
         yield scrapy.Request(url="https://e-childschoolinfo.moe.go.kr/kinderMt/combineFind.do?&pageCnt=50", callback=self.parse_allkinder)
 
 
     def parse_allkinder(self, response):
-
-        ## db의 모든 doc updated = 0 으로 초기화
+        
+        ## 크롤링 시작 전 db의 모든 doc updated = 0 으로 초기화
         db.kinder_test.update_many(
             { "kinderall" : 1 },
             { '$set' : { "updated" : 0 }}
         )
 
        
-        # 마지막 페이지 번호 검사
+        # 유치원 목록 마지막 페이지 번호 가져오기
         last_page = response.css('#resultArea > div.footer > div.paging > a.last::attr(href)').get()
         last_page = last_page.split("=")[1]
         print(int(last_page))
 
         
-        
+        # 페이지마다 parse_pagekinder 함수 호출
         for i in range(1, int(last_page)+1):
         # for i in range(152, 153):
             page_url = 'https://e-childschoolinfo.moe.go.kr/kinderMt/combineFind.do?pageIndex={}&pageCnt=50'.format(i)
@@ -73,6 +71,7 @@ class KinderSpider(scrapy.Spider):
         
 
     # 페이지별 유치원 크롤링
+    # 페이지별로 50개씩 유치원 목록있음
     def parse_pagekinder(self, response):
        
 
@@ -80,20 +79,18 @@ class KinderSpider(scrapy.Spider):
         print(response.meta['page_kinder'])
         time.sleep(0.3)
         kinder_listnum = driver.find_elements_by_css_selector("#resultArea > div.lists > ul > li")
-        # print("&&&&&&&")
-        # print(response.meta['page_kinder'])
+        
 
-        # db 효율적
+       
         bulk_list = []
 
         
         for i in range(1, len(kinder_listnum)+1):
         # for i in range(1, 5):
             
-            # driver.get(response.meta['page_kinder']) # 유치원 들어갈 때마다 호출?? => driver
-            
-            ####
+            # 유치원/어린이집 옆에 "유" 또는 "어" 표시가 있음
             baby_or_kinder = driver.find_element_by_css_selector("#resultArea > div.lists > ul > li:nth-child({}) > div.info > span".format(i)).text
+
             ## 어린이집일 때는 크롤링x
             if(baby_or_kinder == "어"): 
                 continue
@@ -103,7 +100,8 @@ class KinderSpider(scrapy.Spider):
                 
 
                 """
-                폐원여부 : 폐원 있을 때 태그 구조 달라짐 => 예외처리
+                1. 폐원, 휴원한 유치원이라면 
+                2. continue
                 """
                 try:
                     kinder_closed = driver.find_element_by_css_selector("#resultArea > div.lists > ul > li:nth-child({}) > div.info > h5 > span.est.closed".format(i)).text
@@ -127,18 +125,23 @@ class KinderSpider(scrapy.Spider):
 
 
                 """
-                사이트내 유치원 이름은 있지만 유치원에 입력된 정보가 없으면 alert창 뜬다.
-                alert 처리
+                1. 유치원 목록에 유치원이 있지만 해당 유치원에서 정보게시를 하지 않았으면 
+                2. alert창이 뜸 -> dismiss하고 뒤로가기해서 목록페이지로 돌아감
+                3. continue
                 """
                 try:
                     noinfo_alert = driver.switch_to_alert()
                     print(noinfo_alert.text)
                     noinfo_alert.dismiss()
-                    # driver.switch_to.window(driver.window_handles[0])
                     driver.back()
                     continue
                 
                 except:
+                    
+                    """
+                    폐원, 휴원 하지않고 정보도 제대로 올렸을 경우
+                    유치원 크롤링 시작
+                    """
 
                     # 대표자명, 원장명, 관할행정기관
                     kinder_rppnname = driver.find_element_by_css_selector("#summaryBox > div > div.col.info > div.cont.base > ul > li:nth-child(3) > span").text
@@ -146,17 +149,15 @@ class KinderSpider(scrapy.Spider):
                     kinder_admin = driver.find_element_by_css_selector("#summaryBox > div > div.col.info > div.cont.base > ul > li:nth-child(7) > span").text  
                     
 
-                    # 학급/교육 네비게이션 클릭
+                    # 학급/교육 탭으로 넘어감
                     kinder_class = driver.find_element_by_css_selector("#tabGroup > ul > li:nth-child(3) > a")
                     kinder_class.click()
 
                     kinder_name = driver.find_element_by_css_selector("#tabContTitle > i").text           
                     
-                    # 총정원, 현인원, 학급 수, 학급 별 인원
+                    # 총정원, 현인원, 학급 수, 학급 별 인원 크롤링
                     per_table = driver.find_element_by_css_selector("#subPage > div.wrap > div:nth-child(8) > table")
                     tbody = per_table.find_element_by_tag_name("tbody")
-                    
-                    ## 테이블 구조 index가 row마다 다름
                     rows_class = tbody.find_elements_by_tag_name("tr")[0]
                     body = rows_class.find_elements_by_tag_name("td")
                     for index, value in enumerate(body):
@@ -179,7 +180,7 @@ class KinderSpider(scrapy.Spider):
                         elif(index == 8):
                             kin_sp_class = value.text 
 
-                    # 합치기
+                    
                     rows_totnum = tbody.find_elements_by_tag_name("tr")[1]
                     body = rows_totnum.find_elements_by_tag_name("td")
                     for index, value in enumerate(body):
@@ -221,14 +222,16 @@ class KinderSpider(scrapy.Spider):
                     # 교직원 수
                     teachernum = driver.find_element_by_css_selector("#subPage > div.wrap > div:nth-child(11) > table > tbody > tr > td:nth-child(1)").text
 
-                    # 비용, 회계 탭
+                    # 비용, 회계 탭으로 넘어감
                     kinder_cost = driver.find_element_by_css_selector("#tabGroup > ul > li:nth-child(4) > a")
                     kinder_cost.click()
-
+                    
+                    # 공시차수
                     update_time = driver.find_element_by_css_selector("#select-time_displayAtag").text
                     # print(update_time)
                     
-                
+
+                    
                     # 기본경비 - 기본교육
                     basic_age3 = {}; basic_age4 = {}; basic_age5 = {}
                     # 선택경비 - 기본교육
@@ -237,6 +240,11 @@ class KinderSpider(scrapy.Spider):
                     detail_flag = 0
                     option_index = 0
 
+                    # 기본교육 비용 표 크롤링
+                    """
+                    기본경비와 선택경비가 한 테이블안에 들어가있어 구별어려움
+                    기본경비 항목 중 마지막 행에 "합계"라는 글자를 기준으로 기본경비, 선택경비로 나뉨
+                    """
                     tbody = driver.find_element_by_css_selector("#subPage > div > div:nth-child(11) > table > tbody")
                     cost_rows = tbody.find_elements_by_tag_name("tr")
                     for index, value in enumerate(cost_rows):
@@ -250,7 +258,7 @@ class KinderSpider(scrapy.Spider):
                             amt_money5 = value.find_elements_by_tag_name("td")[2]
                             pay_cycle = value.find_elements_by_tag_name("td")[3]
                             
-                            ## 간식비(월단위) : 10000원
+                            ## ex) 간식비(월단위) : 10000원
                             detail_text = detail.text
                             detail = detail.text + "("+pay_cycle.text+")"
                             basic_age3[detail] = amt_money3.text
@@ -262,9 +270,11 @@ class KinderSpider(scrapy.Spider):
                                 continue
                                 
                         
-                        # 선택경비의 첫번째 detail 항목은 th[1]
-                        # 다음 항목부터는 th[0]
+                        
                         elif(detail_flag == 1):
+                            # 선택경비의 첫 항목은 th[1]에 있음 나머지는 th[0]에 있음
+                            # 항목(입학금, 원복비, 현장학습비 등)
+                            # option_index로 구분
                             if(option_index == 0):
                                 detail = value.find_elements_by_tag_name("th")[1]
                             elif(option_index != 0):
@@ -283,7 +293,9 @@ class KinderSpider(scrapy.Spider):
                             
                             option_index += 1
                     
-                    # 방과후 과정 교육비용
+
+                    # 기본과정 비용 크롤링방법과 동일
+                    # 방과후과정 표 크롤링
                     tbody = driver.find_element_by_css_selector("#subPage > div > div:nth-child(14) > table > tbody")
                     cost_rows = tbody.find_elements_by_tag_name("tr")
 
@@ -311,11 +323,20 @@ class KinderSpider(scrapy.Spider):
                             aftbasic_age4[detail] = amt_money4.text
                             aftbasic_age5[detail] = amt_money5.text
 
+                            
+                            """
+                            테이블 값 중 합계(월)이 나오면
+                            그 아래 행부터는 선택경비
+                            detail_flag = 1 
+                            for문에서 현재 테이블 row 위치가 기본경비인지 선택경비인지 구분
+                            """
                             if(detail_text == "합계(월)"):
                                 detail_flag = 1 
                                 continue
                                 
 
+                        # 선택경비 크롤링
+                        # 선택경비에서 첫번째 행만 항목이 th[1]에 있고 나머지는 모두 th[0]           
                         elif(detail_flag == 1):
                             if(option_index==0):
                                 detail = value.find_elements_by_tag_name("th")[1]
@@ -340,8 +361,7 @@ class KinderSpider(scrapy.Spider):
                     driver.back()
                     
 
-                    # 유치원 이름, 관할행정기관, 유치원 총정원수/현원수, 교직원 수, 제공서비스, 학급별 인원수, 학급별 비용, 혼합반
-                    # 유치원 구분하기위해 원장명 추가
+                    # 유치원 이름, 대표자명, 원장명, 관할행정기관, 유치원 총정원수/현원수, 교직원 수, 제공서비스, 학급별 인원수, 학급별 비용, 혼합반
                     kinder_doc = {
                         "update_time" : update_time,
                         "kindername" : kinder_name,
@@ -403,18 +423,9 @@ class KinderSpider(scrapy.Spider):
                     
                 
                 
-
+        # bulk_list에 값이 들어가있을 때만 db write
         if bulk_list:
             db.kinder_test.bulk_write(bulk_list)
 
         # db.kinder.bulk_write(bulk_list) # epic_testdb
         
-        """
-        basic_age3.clear(); basic_age4.clear(); basic_age5.clear()
-        option_age3.clear(); option_age4.clear(); option_age5.clear()
-        aftbasic_age3.clear(); aftbasic_age4.clear(); aftbasic_age5.clear()
-        aftoption_age3.clear(); aftoption_age4.clear(); aftoption_age5.clear()
-        """
-
-
-        # db.kinder.bulktest.bulk_write(bulk_list)
