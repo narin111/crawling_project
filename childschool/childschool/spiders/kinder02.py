@@ -63,8 +63,8 @@ class Kinder02Spider(scrapy.Spider):
 
         
         # 페이지마다 parse_pagekinder 함수 호출
-        # for i in range(1, int(last_page)+1):
-        for i in range(29, 30):
+        for i in range(1, int(last_page)+1):
+        # for i in range(29, 30):
             page_url = 'https://e-childschoolinfo.moe.go.kr/kinderMt/combineFind.do?pageIndex={}&pageCnt=50'.format(i)
             
             driver.get(page_url)
