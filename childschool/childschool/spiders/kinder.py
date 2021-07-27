@@ -64,8 +64,8 @@ class KinderSpider(scrapy.Spider):
 
         
         # 페이지마다 parse_pagekinder 함수 호출
-        for i in range(1, int(last_page)+1):
-        # for i in range(152, 153):
+        # for i in range(1, int(last_page)+1):
+        for i in range(29, 30):
             page_url = 'https://e-childschoolinfo.moe.go.kr/kinderMt/combineFind.do?pageIndex={}&pageCnt=50'.format(i)
             yield scrapy.Request(url = page_url, callback = self.parse_pagekinder, meta={'page_kinder':page_url})
         
@@ -131,7 +131,6 @@ class KinderSpider(scrapy.Spider):
                 """
                 try:
                     noinfo_alert = driver.switch_to_alert()
-                    print(noinfo_alert.text)
                     noinfo_alert.dismiss()
                     driver.back()
                     continue
@@ -139,7 +138,7 @@ class KinderSpider(scrapy.Spider):
                 except:
                     
                     """
-                    폐원, 휴원 하지않고 정보도 제대로 올렸을 경우
+                    폐원, 휴원 하지않고 정보 제대로 올렸을 경우
                     유치원 크롤링 시작
                     """
 

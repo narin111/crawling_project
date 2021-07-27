@@ -62,8 +62,8 @@ class KindSpider(scrapy.Spider):
         last_page = last_page.split("=")[1]
         
         
-        for i in range(int(last_page), 0, -1): # (lstpg, 0, -1)
-        # for i in range(653, 656):
+        # for i in range(int(last_page), 0, -1): # (lstpg, 0, -1)
+        for i in range(210, 211):
             page_url = 'https://e-childschoolinfo.moe.go.kr/kinderMt/combineFind.do?pageIndex={}&pageCnt=50'.format(i) 
             yield scrapy.Request(url = page_url, callback = self.parse_allchild, meta={'page_kinder':page_url})
 
@@ -254,6 +254,7 @@ class KindSpider(scrapy.Spider):
                         elif(index==5):
                             cost_5 = cost.text   
                     
+
                     # 기타필요경비
                     cost_dict = {}
                     cost_table = driver.find_element_by_css_selector("#popWrap2 > div > div > div > table:nth-child(9)")
