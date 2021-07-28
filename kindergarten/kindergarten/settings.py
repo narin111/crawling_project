@@ -17,7 +17,7 @@ import datetime
 
 HTTPERROR_ALLOWED_CODES  =[404]
 
-LOG_FILE='log/{}_kinder.txt'.format(datetime.datetime.now().strftime('%Y-%m-%d'))
+LOG_FILE='log/{}_kind.txt'.format(datetime.datetime.now().strftime('%Y-%m-%d'))
 LOG_LEVEL = 'INFO'
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent

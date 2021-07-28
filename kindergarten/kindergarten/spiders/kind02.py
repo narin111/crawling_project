@@ -62,6 +62,7 @@ class Kind02Spider(scrapy.Spider):
            
             driver.get(page_url)
 
+            print(page_url)
          
             # 페이지에서 유치원/어린이집 리스트 개수 
             kinder_list = driver.find_elements_by_css_selector("#resultArea > div.lists > ul > li")
@@ -90,6 +91,8 @@ class Kind02Spider(scrapy.Spider):
 
                     # 바뀐 활성탭에서 alert창 처리해야함
                     # 폐원된 시설 예외처리
+                    
+                    # No such alert 오류 
                     try: 
                         alert = driver.switch_to_alert()
                         print(alert.text)
@@ -97,13 +100,10 @@ class Kind02Spider(scrapy.Spider):
                         driver.close()
                         driver.switch_to.window(driver.window_handles[0])
                         continue
-                        
-
-                    except:
-                        
+                    
+                    except:                       
                         time.sleep(0.3)
-
-                        
+          
                         kinder_name = driver.find_element_by_css_selector("#CRNAMETITLE").text
                         kinder_chief = driver.find_element_by_css_selector("#popWrap2 > div > div > div > table > tbody > tr:nth-child(3) > td").text
                         kinder_esta = driver.find_element_by_css_selector("#popWrap2 > div > div > div > table > tbody > tr:nth-child(4) > td").text
@@ -289,7 +289,8 @@ class Kind02Spider(scrapy.Spider):
                         
                         bulk_list.append(UpdateOne({"kinder_name": kinder_name, 
                                                     "kinder_admin" : kinder_admin}, {'$set' : kinder_doc}, upsert=True ))
-                       
+                    
+
                     
             
 

@@ -1,16 +1,15 @@
 import scrapy
 from pymongo.message import update
-from pymongo.operations import UpdateOne, UpdateMany
-import scrapy
+from pymongo.operations import UpdateOne, UpdateMany, InsertOne 
 from selenium import webdriver
-import pymongo
 import time
-from pymongo import InsertOne 
+from selenium.common.exceptions import NoSuchElementException, UnexpectedAlertPresentException, ElementClickInterceptedException
+from selenium.webdriver.common.alert import Alert
 
-#### spider quit and functioncall
+
 from scrapy import signals
 from pydispatch import dispatcher
-####
+
 
 from pymongo import MongoClient
 client = MongoClient('localhost', 27017)
@@ -62,14 +61,15 @@ class Kinder02Spider(scrapy.Spider):
         print(int(last_page))
 
         
-        # 페이지마다 parse_pagekinder 함수 호출
-        for i in range(1, int(last_page)+1):
-        # for i in range(29, 30):
+        
+        # for i in range(1, int(last_page)+1):
+        for i in range(148, 149):
             page_url = 'https://e-childschoolinfo.moe.go.kr/kinderMt/combineFind.do?pageIndex={}&pageCnt=50'.format(i)
             
             driver.get(page_url)
+            print(page_url)
             
-            time.sleep(0.3)
+            
 
             # 페이지 당 유치원 목록 개수
             kinder_listnum = driver.find_elements_by_css_selector("#resultArea > div.lists > ul > li")
@@ -112,10 +112,35 @@ class Kinder02Spider(scrapy.Spider):
                         kinder_closed = "-"
                         
                     # 유치원/어린이집 클릭
-                    kinder_service = driver.find_element_by_css_selector("#resultArea > div.lists > ul > li:nth-child({}) > div.info > i".format(i)).text
-                    kinder_one = driver.find_element_by_css_selector("#resultArea > div.lists > ul > li:nth-child({}) > div.info > h5 > a".format(i))
-                    kinder_one.click()
+                    # kinder_service = driver.find_element_by_css_selector("#resultArea > div.lists > ul > li:nth-child({}) > div.info > i".format(i)).text
+                    # kinder_one = driver.find_element_by_css_selector("#resultArea > div.lists > ul > li:nth-child({}) > div.info > h5 > a".format(i))
+                    # kinder_one.click()
+                    
+                    time.sleep(0.3)
+                    try:
+                        kinder_service = driver.find_element_by_css_selector("#resultArea > div.lists > ul > li:nth-child({}) > div.info > i".format(i)).text
+                        kinder_one = driver.find_element_by_css_selector("#resultArea > div.lists > ul > li:nth-child({}) > div.info > h5 > a".format(i))
+                        kinder_one.click()
 
+
+                    # 가끔 클릭되지않는 유치원있음
+                    except ElementClickInterceptedException:
+                        print("#########")
+                        print(kinder_name)
+                        print("#########")
+                        pass
+                    
+
+                    
+                    # 목록에서 alert 찾으려고 해서 nosuchalert 오류남 
+
+                   
+                    """
+                    오류추가
+                    selenium.common.exceptions.ElementClickInterceptedException: Message: element click intercepted
+                    148 제성유치원 또는 제니스유치원 => 원인 못찾음
+
+                    """
 
 
                     """
@@ -123,17 +148,24 @@ class Kinder02Spider(scrapy.Spider):
                     2. alert창이 뜸 -> dismiss하고 뒤로가기해서 목록페이지로 돌아감
                     3. continue
                     """
+                    
+
+
+
                     try:
+                       
                         noinfo_alert = driver.switch_to_alert()
                         noinfo_alert.dismiss()
                         driver.back()
-                        continue
-                    
+                        continue   
+
+
                     except:
                         
                         """
                         폐원, 휴원 하지않고 정보 제대로 올렸을 경우
                         유치원 크롤링 시작
+                        except : 해당 유치원의 입력된 정보가 존재하지 않습니다. alert 창 처리
                         """
 
                         # 대표자명, 원장명, 관할행정기관
@@ -412,7 +444,8 @@ class Kinder02Spider(scrapy.Spider):
                         # 같은 이름 유치원인 경우를 구별하기위해 kinder_admin도 추가
                         bulk_list.append(UpdateOne({"kinder_name": kinder_name, 
                                                     "kinder_admin" : kinder_admin}, {'$set' : kinder_doc }, upsert=True ))
-                        
+
+                     
                         
                     
                     
