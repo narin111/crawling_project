@@ -10,9 +10,19 @@
  - 시도시군구코드 엑셀파일 -> json 변환
  - http://shancarter.github.io/mr-data-converter/ (json format 변환)
  - https://jsonformatter.curiousconcept.com/ (json 형태 파일 다운로드)
+ - 2021.07.29 목요일 json 파일 Github 추가
 
 
-### 계획
-- 디버거 설정하기
-- bulkwrite 알아보기
-- 업데이트, 삭제 부분 추가
+### childschool
+유치원 크롤링 project
+- kinder02.py 가 최신 python 파일
+
+
+### kindergarten
+어린이집 크롤링 project
+- kind02.py 가 최신 python 파일
+
+
+### json_separate_field10.py
+- 유치원 API parsing python file
+- 유치원 스크래핑 DB collection과 같은 collection에 들어감 (같은 유치원에 api 데이터 upsert)

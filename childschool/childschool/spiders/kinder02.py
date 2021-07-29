@@ -62,8 +62,8 @@ class Kinder02Spider(scrapy.Spider):
 
         
         
-        # for i in range(1, int(last_page)+1):
-        for i in range(148, 149):
+        for i in range(1, int(last_page)+1):
+        # for i in range(148, 149):
             page_url = 'https://e-childschoolinfo.moe.go.kr/kinderMt/combineFind.do?pageIndex={}&pageCnt=50'.format(i)
             
             driver.get(page_url)
@@ -80,7 +80,7 @@ class Kinder02Spider(scrapy.Spider):
 
             
             for i in range(1, len(kinder_listnum)+1):
-            # for i in range(1, 5):
+            # for i in range(len(kinder_listnum), 0, -1):
                 
                 # 유치원/어린이집 옆에 "유" 또는 "어" 표시가 있음
                 baby_or_kinder = driver.find_element_by_css_selector("#resultArea > div.lists > ul > li:nth-child({}) > div.info > span".format(i)).text
@@ -91,7 +91,6 @@ class Kinder02Spider(scrapy.Spider):
                 
                 ## 유치원 크롤링
                 elif(baby_or_kinder == "유"):
-                    
 
                     """
                     1. 폐원, 휴원한 유치원이라면 
@@ -116,6 +115,7 @@ class Kinder02Spider(scrapy.Spider):
                     # kinder_one = driver.find_element_by_css_selector("#resultArea > div.lists > ul > li:nth-child({}) > div.info > h5 > a".format(i))
                     # kinder_one.click()
                     
+
                     time.sleep(0.3)
                     try:
                         kinder_service = driver.find_element_by_css_selector("#resultArea > div.lists > ul > li:nth-child({}) > div.info > i".format(i)).text
@@ -126,7 +126,7 @@ class Kinder02Spider(scrapy.Spider):
                     # 가끔 클릭되지않는 유치원있음
                     except ElementClickInterceptedException:
                         print("#########")
-                        print(kinder_name)
+                        print(driver.find_element_by_css_selector("#resultArea > div.lists > ul > li:nth-child({}) > div.info > h5 > a".format(i)).text)
                         print("#########")
                         pass
                     
@@ -139,6 +139,7 @@ class Kinder02Spider(scrapy.Spider):
                     오류추가
                     selenium.common.exceptions.ElementClickInterceptedException: Message: element click intercepted
                     148 제성유치원 또는 제니스유치원 => 원인 못찾음
+                    ElementClickInterceptedException 오류 나면 alert 오류도 같이 남
 
                     """
 
@@ -151,9 +152,7 @@ class Kinder02Spider(scrapy.Spider):
                     
 
 
-
                     try:
-                       
                         noinfo_alert = driver.switch_to_alert()
                         noinfo_alert.dismiss()
                         driver.back()
@@ -443,7 +442,8 @@ class Kinder02Spider(scrapy.Spider):
                         # upsert 사용하기 
                         # 같은 이름 유치원인 경우를 구별하기위해 kinder_admin도 추가
                         bulk_list.append(UpdateOne({"kinder_name": kinder_name, 
-                                                    "kinder_admin" : kinder_admin}, {'$set' : kinder_doc }, upsert=True ))
+                                                    "kinder_admin" : kinder_admin}, 
+                                                    {'$set' : kinder_doc }, upsert=True ))
 
                      
                         
