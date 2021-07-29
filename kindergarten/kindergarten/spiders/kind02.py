@@ -77,7 +77,6 @@ class Kind02Spider(scrapy.Spider):
 
                 # 유치원일때 InvalidOperation: No operations to execute 오류
                 if(baby_or_kinder == "유"):
-                    # print("유")
                     continue
 
                 elif(baby_or_kinder == "어"):
@@ -92,15 +91,23 @@ class Kind02Spider(scrapy.Spider):
                     # 바뀐 활성탭에서 alert창 처리해야함
                     # 폐원된 시설 예외처리
                     
-                    # No such alert 오류 
+
+
+                    # No such alert 오류 처리
                     try: 
+                        # 폐지된 시설 .... alert 처리
                         alert = driver.switch_to_alert()
                         print(alert.text)
                         alert.dismiss()
+
+                        # 해당 어린이집 활성탭 닫고 다시 어린이집 목록으로
                         driver.close()
                         driver.switch_to.window(driver.window_handles[0])
                         continue
                     
+
+                    # 크롤링 시작 
+                    # 110 ~ 255
                     except:                       
                         time.sleep(0.3)
           
@@ -118,7 +125,8 @@ class Kind02Spider(scrapy.Spider):
                         kinder_basic = driver.find_element_by_css_selector("#popWrap2 > div > div > ul > li:nth-child(3) > a")
                         kinder_basic.click()
 
-                        # 인원수 테이블 테스트 for문 하나로 합치기
+                        # 어린이집 인원 수 크롤링
+                        # 130 ~ 212
                         per_table = driver.find_element_by_css_selector("#popWrap2 > div > div > div > table:nth-child(3)")
                         tbody = per_table.find_element_by_tag_name("tbody")
                         rows_class = tbody.find_elements_by_tag_name("tr")[0]
@@ -249,7 +257,8 @@ class Kind02Spider(scrapy.Spider):
                             cost_dict[detail] = pay_info
 
                         
-                        # 원래창으로 돌아옴
+                        # 1. 어린이집 정보 활성탭 닫고
+                        # 2. 원래창으로 돌아옴
                         driver.close()
                         driver.switch_to.window(driver.window_handles[0])
 

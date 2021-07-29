@@ -62,8 +62,8 @@ class Kinder02Spider(scrapy.Spider):
 
         
         
+        # 첫 페이지부터 마지막 페이지까지 url+index{}로 for문
         for i in range(1, int(last_page)+1):
-        # for i in range(148, 149):
             page_url = 'https://e-childschoolinfo.moe.go.kr/kinderMt/combineFind.do?pageIndex={}&pageCnt=50'.format(i)
             
             driver.get(page_url)
@@ -79,23 +79,26 @@ class Kinder02Spider(scrapy.Spider):
             bulk_list = []
 
             
+            # 페이지에 보이는 유치원 목록 개수만큼 for문
             for i in range(1, len(kinder_listnum)+1):
-            # for i in range(len(kinder_listnum), 0, -1):
-                
-                # 유치원/어린이집 옆에 "유" 또는 "어" 표시가 있음
+            
+                # "유" 또는 "어" 표시로 유치원, 어린이집 구별
+                # 유치원과 어린이집 클릭했을 때 사이트 동작 다름
                 baby_or_kinder = driver.find_element_by_css_selector("#resultArea > div.lists > ul > li:nth-child({}) > div.info > span".format(i)).text
 
-                ## 어린이집일 때는 크롤링x
+                ## 어린이집일 때는 continue
                 if(baby_or_kinder == "어"): 
                     continue
                 
+
                 ## 유치원 크롤링
                 elif(baby_or_kinder == "유"):
 
                     """
                     1. 폐원, 휴원한 유치원이라면 
-                    2. continue
+                    2. continue 목록에서 다음 유치원으로
                     """
+
                     try:
                         kinder_closed = driver.find_element_by_css_selector("#resultArea > div.lists > ul > li:nth-child({}) > div.info > h5 > span.est.closed".format(i)).text
                         if(kinder_closed == "폐원"):
@@ -115,42 +118,41 @@ class Kinder02Spider(scrapy.Spider):
                     # kinder_one = driver.find_element_by_css_selector("#resultArea > div.lists > ul > li:nth-child({}) > div.info > h5 > a".format(i))
                     # kinder_one.click()
                     
+                    
 
                     time.sleep(0.3)
+                    
+                    # 유치원 눌러봤을 때 ElementClickInterceptedException 오류
                     try:
                         kinder_service = driver.find_element_by_css_selector("#resultArea > div.lists > ul > li:nth-child({}) > div.info > i".format(i)).text
                         kinder_one = driver.find_element_by_css_selector("#resultArea > div.lists > ul > li:nth-child({}) > div.info > h5 > a".format(i))
                         kinder_one.click()
 
 
-                    # 가끔 클릭되지않는 유치원있음
+                    # 가끔 클릭되지않는 유치원있음 - 테스트용 오류해결 못함
                     except ElementClickInterceptedException:
                         print("#########")
                         print(driver.find_element_by_css_selector("#resultArea > div.lists > ul > li:nth-child({}) > div.info > h5 > a".format(i)).text)
                         print("#########")
                         pass
+                        # continue
                     
 
-                    
-                    # 목록에서 alert 찾으려고 해서 nosuchalert 오류남 
-
-                   
+            
                     """
-                    오류추가
-                    selenium.common.exceptions.ElementClickInterceptedException: Message: element click intercepted
-                    148 제성유치원 또는 제니스유치원 => 원인 못찾음
                     ElementClickInterceptedException 오류 나면 alert 오류도 같이 남
-
-                    """
-
-
-                    """
                     1. 유치원 목록에 유치원이 있지만 해당 유치원에서 정보게시를 하지 않았으면 
                     2. alert창이 뜸 -> dismiss하고 뒤로가기해서 목록페이지로 돌아감
                     3. continue
                     """
                     
 
+                    """
+                        
+                        정보를 입력하지 않은 유치원은 continue로 넘기고
+                        목록의 다음 유치원 크롤링
+                        
+                    """
 
                     try:
                         noinfo_alert = driver.switch_to_alert()
@@ -158,15 +160,10 @@ class Kinder02Spider(scrapy.Spider):
                         driver.back()
                         continue   
 
+                    
 
                     except:
-                        
-                        """
-                        폐원, 휴원 하지않고 정보 제대로 올렸을 경우
-                        유치원 크롤링 시작
-                        except : 해당 유치원의 입력된 정보가 존재하지 않습니다. alert 창 처리
-                        """
-
+                                                
                         # 대표자명, 원장명, 관할행정기관
                         kinder_rppnname = driver.find_element_by_css_selector("#summaryBox > div > div.col.info > div.cont.base > ul > li:nth-child(3) > span").text
                         kinder_ldgrname = driver.find_element_by_css_selector("#summaryBox > div > div.col.info > div.cont.base > ul > li:nth-child(4) > span").text
@@ -180,6 +177,7 @@ class Kinder02Spider(scrapy.Spider):
                         kinder_name = driver.find_element_by_css_selector("#tabContTitle > i").text           
                         
                         # 총정원, 현인원, 학급 수, 학급 별 인원 크롤링
+                        # 180 ~ 243
                         per_table = driver.find_element_by_css_selector("#subPage > div.wrap > div:nth-child(8) > table")
                         tbody = per_table.find_element_by_tag_name("tbody")
                         rows_class = tbody.find_elements_by_tag_name("tr")[0]
@@ -242,7 +240,9 @@ class Kinder02Spider(scrapy.Spider):
                                 kin35_currnum = value.text
                             elif(index == 6):
                                 kin_sp_currnum = value.text
-                            
+                        
+
+
                         # 교직원 수
                         teachernum = driver.find_element_by_css_selector("#subPage > div.wrap > div:nth-child(11) > table > tbody > tr > td:nth-child(1)").text
 
@@ -252,10 +252,10 @@ class Kinder02Spider(scrapy.Spider):
                         
                         # 공시차수
                         update_time = driver.find_element_by_css_selector("#select-time_displayAtag").text
-                        # print(update_time)
                         
 
-                        
+                        # 교육 비용 259 ~  379
+
                         # 기본경비 - 기본교육
                         basic_age3 = {}; basic_age4 = {}; basic_age5 = {}
                         # 선택경비 - 기본교육
@@ -379,7 +379,7 @@ class Kinder02Spider(scrapy.Spider):
                                 option_index += 1
                         
                     
-
+                        # driver 상태 : 다시 목록페이지로 넘어감
                         driver.back()
                         driver.back()
                         driver.back()
