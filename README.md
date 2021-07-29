@@ -17,16 +17,16 @@
 유치원 크롤링 project
 - kinder02.py 가 최신 python 파일
 
-<img src = "https://user-images.githubusercontent.com/43459698/127446757-e9c075e5-948f-495b-84f4-b7321bf13ae0.png" width="50%" height = "50%">
-![image](https://user-images.githubusercontent.com/43459698/127446877-795672cd-917d-4f81-80d4-50ac24b7c161.png)
+<img src = "https://user-images.githubusercontent.com/43459698/127446757-e9c075e5-948f-495b-84f4-b7321bf13ae0.png" width="80%" height = "80%">
+<img src = "https://user-images.githubusercontent.com/43459698/127446877-795672cd-917d-4f81-80d4-50ac24b7c161.png" width="80%" height = "80%">
+
 
 
 ### kindergarten
 어린이집 크롤링 project
 - kind02.py 가 최신 python 파일
-![image](https://user-images.githubusercontent.com/43459698/127446940-5c024ac9-37d4-4f59-83e0-364639d5daaa.png)
-![image](https://user-images.githubusercontent.com/43459698/127447005-da5b6853-8af6-4666-8144-5c6c112a27a8.png)
-
+<img src = "https://user-images.githubusercontent.com/43459698/127446940-5c024ac9-37d4-4f59-83e0-364639d5daaa.png" width="80%" height = "80%">
+<img src = "https://user-images.githubusercontent.com/43459698/127447005-da5b6853-8af6-4666-8144-5c6c112a27a8.png" width="80%" height = "80%">
 
 ### json_separate_field10.py
 - 유치원 API parsing python file
