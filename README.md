@@ -17,7 +17,7 @@
 유치원 크롤링 project
 - kinder02.py 가 최신 python 파일
 
-<img src = "https://user-images.githubusercontent.com/43459698/127446757-e9c075e5-948f-495b-84f4-b7321bf13ae0.png" width="30%" height = "30%">
+<img src = "https://user-images.githubusercontent.com/43459698/127446757-e9c075e5-948f-495b-84f4-b7321bf13ae0.png" width="50%" height = "50%">
 ![image](https://user-images.githubusercontent.com/43459698/127446877-795672cd-917d-4f81-80d4-50ac24b7c161.png)
 
 
