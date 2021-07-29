@@ -10,6 +10,11 @@ from selenium.webdriver.common.alert import Alert
 from scrapy import signals
 from pydispatch import dispatcher
 
+###
+import logging
+logging.basicConfig(filename='./log/testkinder.log', level=logging.INFO)
+###
+
 
 from pymongo import MongoClient
 client = MongoClient('localhost', 27017)
@@ -48,11 +53,11 @@ class Kinder02Spider(scrapy.Spider):
 
     def parse_allkinder(self, response):
         
-        ## 크롤링 시작 전 db의 모든 doc updated = 0 으로 초기화
-        db.kinder_test.update_many(
-            { "kinderall" : 1 },
-            { '$set' : { "updated" : 0 }}
-        )
+        ## 맨위로 옮기기
+        # db.kinder_test.update_many(
+        #     { "kinderall" : 1 },
+        #     { '$set' : { "updated" : 0 }}
+        # )
 
        
         # 유치원 목록 마지막 페이지 번호 가져오기
@@ -63,7 +68,8 @@ class Kinder02Spider(scrapy.Spider):
         
         
         # 첫 페이지부터 마지막 페이지까지 url+index{}로 for문
-        for i in range(1, int(last_page)+1):
+        # for i in range(1, int(last_page)+1):
+        for i in range(68, 69):
             page_url = 'https://e-childschoolinfo.moe.go.kr/kinderMt/combineFind.do?pageIndex={}&pageCnt=50'.format(i)
             
             driver.get(page_url)
@@ -144,6 +150,13 @@ class Kinder02Spider(scrapy.Spider):
                     1. 유치원 목록에 유치원이 있지만 해당 유치원에서 정보게시를 하지 않았으면 
                     2. alert창이 뜸 -> dismiss하고 뒤로가기해서 목록페이지로 돌아감
                     3. continue
+
+
+                    https://e-childschoolinfo.moe.go.kr/kinderMt/combineFind.do?pageIndex=68&pageCnt=50 두번째 사천유치원
+                    => alert도 없고 입력된 정보도 없음
+
+                    selenium.common.exceptions.NoAlertPresentException: Message: no such alert    에러
+                    
                     """
                     
 

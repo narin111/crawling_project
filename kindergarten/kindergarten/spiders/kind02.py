@@ -12,6 +12,11 @@ from pydispatch import dispatcher
 
 from selenium.common.exceptions import UnexpectedAlertPresentException
 
+###
+import logging
+logging.basicConfig(filename='./log/testkind.log', level=logging.INFO)
+###
+
 
 # path = 'C:/Users/LG/Desktop/child_field/kindergarten/chromedriver.exe'
 path = 'D:/Desktop/crawling_project/childschool/chromedriver.exe'
@@ -45,12 +50,13 @@ class Kind02Spider(scrapy.Spider):
        
 
     def parse_childpage(self, response):
-
-        ## 크롤링 시작 전 db의 모든 doc updated = 0 으로 초기화
-        db.eorini_test_1.update_many(
-            { 'kinderall' : 1 },
-            { '$set' : { 'updated' : 0 }}
-        )
+        
+        # 맨 위로 옮기기
+        # ## 크롤링 시작 전 db의 모든 doc updated = 0 으로 초기화
+        # db.eorini_test_1.update_many(
+        #     { 'kinderall' : 1 },
+        #     { '$set' : { 'updated' : 0 }}
+        # )
 
         last_page = response.css('#resultArea > div.footer > div.paging > a.last::attr(href)').get()
         last_page = last_page.split("=")[1]
